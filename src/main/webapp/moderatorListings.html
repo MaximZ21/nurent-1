@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Moderator</title>
+    <script src="/scripts/jquery.min.js"></script>
+    <script src="/scripts/lodash.min.js"></script>
+
+    <script type="text/javascript">
+
+        var listings = [];
+
+        function sendLogout() {
+            var token = localStorage.getItem("token");
+            $.ajax({
+                url: "logout",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                statusCode : {
+                    401: function (r) {
+                        console.log(r);
+                        logout();
+                    }
+                },
+                success: function (r) {
+                    logout();
+                }
+            })
+
+        }
+
+        function logout() {
+
+            localStorage.removeItem("token");
+            window.location.replace("/");
+        }
+
+        function getListings() {
+            var token = localStorage.getItem("token");
+            console.log("Sent token:");
+            console.log(token);
+
+            $.ajax({
+                url : 'listings/getPendingListings',
+                dataType: 'json',
+                method : 'GET',
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                statusCode : {
+                    401: function (r) {
+                        console.log(r);
+                        logout();
+                    }
+                },
+                success : function(r) {
+                    listings = r;
+                    updateList();
+
+                }
+            });
+        }
+
+        function approveListing(button) {
+            var index = $(".approve").index(button);
+            var id = listings[index].id;
+            var token = localStorage.getItem("token");
+            $.ajax({
+                url: "listings/approve?" + $.param({"id": id}),
+                method: 'POST',
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                statusCode : {
+                    401: function (r) {
+                        console.log(r);
+                        logout();
+                    }
+                },
+                success: function (r) {
+                    getListings();
+                }
+            })
+        }
+
+        function disapproveListing(button) {
+            var index = $(".disapprove").index(button);
+            var id = listings[index].id;
+            var token = localStorage.getItem("token");
+
+            var comment = prompt("Enter the comment", "You Comment");
+            if (comment == null) {
+                return;
+            }
+
+            $.ajax({
+                url: "listings/refuse?" + $.param({"id": id, "comment": comment}),
+                method: 'POST',
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                statusCode : {
+                    401: function (r) {
+                        console.log(r);
+                        logout();
+                    }
+                },
+                success: function (r) {
+                    getListings();
+                }
+            })
+        }
+
+        function updateList() {
+            $("#listings-list").empty();
+
+
+            for (var i in listings) {
+                if(listings[i].image != null) {
+                    var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + listings[i].image;
+                }
+                $("#listings-list").append("<li class='listing'>" + listings[i].title + ", Price: " + listings[i].price
+                    + ", City: " + listings[i].city
+                    + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + ", Status: " + listings[i].status
+                    + "<img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'><button class='approve' type='button'>approve</button>" + "<button class='disapprove' type='button'>disapprove</button>" + "</li>");
+                var x = document.getElementsByTagName("img").item(i);
+                if(listings[i].image != null) {
+                    x.setAttribute("src", im);
+                }
+                x.setAttribute("style", "width:200px;height:200px;")
+            }
+        }
+
+
+        $(document).ready(function () {
+            var token = localStorage.getItem("token");
+            if (token == null) {
+                window.location.replace("/")
+            } else {
+                getListings();
+            }
+
+            $(document).on('click', '.approve', function (e) {
+                approveListing(e.target);
+            });
+            $(document).on('click', '.disapprove', function (e) {
+                disapproveListing(e.target);
+            });
+            $(document).on('click', '.logout', function (e) {
+                console.log("logout button pressed");
+                sendLogout();
+            });
+        });
+
+    </script>
+</head>
+<body>
+<a href="/nurent/moderator/logs/">Logs</a>
+<h1>Pending listings</h1>
+
+<div id="listings">
+    <ul id="listings-list"> </ul>
+</div>
+
+
+<button id="logout" ONCLICK="sendLogout()">logout</button>
+
+</body>
+</html>

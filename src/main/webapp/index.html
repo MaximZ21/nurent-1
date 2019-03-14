@@ -1,57 +1,347 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>pagingexercise361</title>
-<script src="scripts/jquery.min.js"></script>
-<script src="scripts/lodash.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>NU Rent</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/lodash.min.js"></script>
 
-<!--<script type="text/javascript">-->
-<!--items = [];-->
-<!--function updateList() {-->
-    <!--$("#my-list").html("");-->
-    <!--items.forEach(function (e) {-->
-        <!--$("#my-list").append("<li>" + e + "</li>");-->
-    <!--});-->
-<!--}-->
 
-<!--function getListItems() {-->
-    <!--$.ajax({-->
-        <!--url : 'services/items',-->
-        <!--dataType : 'json',-->
-        <!--success : function(r) {-->
-            <!--items = r.list;-->
-            <!--$("#next-url").html(r.next);-->
-            <!--$("#prev-url").html(r.prev);-->
-            <!--updateList();-->
-        <!--}-->
-    <!--});-->
-<!--}-->
 
-<!--function sendListItem() {-->
-    <!--var s = $("#texttosend").val();-->
-    <!---->
-    <!--$.post("todo", { texttosend: s}, function() {-->
-        <!--getListItems();-->
-    <!--});-->
-<!--}-->
 
-<!--$(document).ready(function () { -->
-    <!--$("#my-list").append("<li>test");-->
-    <!--getListItems();-->
-    <!---->
-    <!--$("#send-item").on('click', function () {-->
-        <!--sendListItem();-->
-    <!--});-->
-<!--});-->
-<!--</script>-->
+     <style>
+        ul.topnav {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        ul.topnav li {float: left;}
+
+        ul.topnav li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        ul.topnav li a:hover:not(.active) {background-color: #111;}
+
+        ul.topnav li a.active {background-color: #4CAF50;}
+
+        ul.topnav li.right {float: right;}
+
+        @media screen and (max-width: 600px){
+            ul.topnav li.right,
+            ul.topnav li {float: none;}
+        }
+        .w3-sidebar a {font-family: "Roboto", sans-serif}
+        body,h1,h2,h3,h4,h5,h6,.w3-wide {font-family: "Montserrat", sans-serif;}
+
+        * {box-sizing: border-box;}
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .background{
+            background: #36383F;
+            color: white;
+        }
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 100%;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        .container {
+            padding: 2px 16px;
+        }
+        .selector-for-some-widget {
+            box-sizing: content-box;
+        }
+        .line {
+            border-right-color: black; /* Цвет линии справа */
+            border-right-style: solid; /* Стиль линии */
+            border-right-width: 5px;  /* Толщина линии */
+            padding-right: 20px;  /* Расстояние между линией и текстом */
+            margin-right: 100px; /* Отступ справа */
+        }
+        .column{
+            float: left;
+            width:100%;
+            padding:10px;
+        }
+
+        #myInput {
+            border-box: box-sizing;
+            background-position: 14px 12px;
+            background-repeat: no-repeat;
+            font-size: 16px;
+            padding: 14px 20px 12px 45px;
+            border: none;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #myInput:focus {outline: 3px solid #ddd;}
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown a:hover {background-color: #ddd;}
+
+
+        .show {display: block;}
+    </style>
+
+
+    <script type="text/javascript">
+
+        var listings = [];
+
+        function checkIfLoggedIn() {
+            var token = localStorage.getItem("token");
+            if (token != null) {
+                $('#header').empty();
+                $('#header').append("<a id='userWelcome' href='nurent/profile' style='text-decoration: none;'><button id='profileButton'>profile: " + "Go to your profile" + "</button></a>");
+            }
+        }
+
+        function getListings() {
+            var e = document.getElementById("buttonid");
+            var city = e.innerHTML;
+            var minprice = document.getElementById("minprice").value;
+            var maxprice = document.getElementById("maxprice").value;
+            var min_number_of_rooms = document.getElementById("minrooms").value;
+            var max_number_of_rooms = document.getElementById("maxrooms").value;
+
+            console.log(city);
+            $.ajax({
+                url : 'nurent/listings',
+                dataType: 'json',
+                method : 'GET',
+                data: {
+                    "city": city,
+                    "minprice" : minprice,
+                    "maxprice" : maxprice,
+                    "min_number_of_rooms" : min_number_of_rooms,
+                    "max_number_of_rooms" : max_number_of_rooms
+                },
+                success : function(r) {
+                    listings = r;
+                    updateList();
+
+                }
+            });
+        }
+
+        function updateList() {
+            $("#listings-list").empty();
+
+            for (var i in listings) {
+
+                console.log(listings[i].title);
+                if(listings[i].image != null) {
+                    var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + listings[i].image;
+                }
+                console.log(im);
+//                 $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><td></tr></table></div></div></div>");
+                $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><p>Address:"+listings[i].building+"</p><p>Description:"+listings[i].description+"</p><p>Contact information:"+listings[i].contact_info+"</p><td></tr></table></div></div></div>");
+
+                
+                var x = document.getElementsByTagName("img").item(i);
+                if(listings[i].image != null) {
+                    x.setAttribute("src", im);
+                }
+                x.setAttribute("style", "width:250px;height:250px;")
+
+            }
+
+
+        }
+
+
+        $(document).ready(function () {
+            checkIfLoggedIn();
+            getListings();
+
+        });
+
+    </script>
+
+    <style>
+        h1 { color: #1b7db4;
+            font-family: 'Droid serif', serif;
+            font-size: 36px;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 44px;
+            margin: 0 0 12px;
+            text-align: center;
+
+        }
+
+        #header {
+            float: right;
+
+        }
+
+        #loginButton {
+            border: 0;
+            cursor: pointer;
+            display: block;
+            font-weight: 600;
+            padding: 5px 9px;
+            text-transform: inherit;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: auto;
+            font-size: 14px;
+            line-height: 18px;
+            background: #c1cad3 0 0;
+            border: 1px solid #c1cad8;
+            border-radius: 4px;
+            color: #000000;
+            position: relative;
+        }
+
+        #profileButton {
+            border: 0;
+            cursor: pointer;
+            display: block;
+            font-weight: 600;
+            padding: 5px 9px;
+            text-transform: inherit;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: auto;
+            font-size: 14px;
+            line-height: 18px;
+            background: #c1cad3 0 0;
+            border: 1px solid #c1cad8;
+            border-radius: 4px;
+            color: #000000;
+            position: relative;
+        }
+
+
+    </style>
+
+
 </head>
-<body>
-<h2>Nu Rent</h2>
-<a href="nurent/login">log in / sign up</a>
+
+
+<body class="w3-content" style="max-width:1920px" >
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-bar-block background w3-collapse w3-top line" style="z-index:3;width:320px" id="mySidebar">
+    <div class="w3-container w3-display-container w3-padding-16">
+        <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
+        <h3 class="w3-wide"><b>NU Rent</b></h3>
+    </div>
+    <br class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
+    <h4 class="w3-bar-item w3-padding"><b>Price:</b></h4>
+    <h5 class="w3-bar-item w3-padding"><br>Minimum<input id="minprice" type="text" size="15" style="border-radius: 3px"></br></h5> <h5 class="w3-bar-item w3-padding"><br>Maximum <input id="maxprice" type="text" size="15" style="border-radius: 3px"><span class="sr-only ">(current)</span></br></a></h5>
+    <h4 class="w3-bar-item w3-padding"><b>Number of rooms:</b></h4>
+    <h5 class="w3-bar-item w3-padding"><br><input id="minrooms" type="text" size="7" style="border-radius: 3px"> - <input id="maxrooms" type="text" size="7" style="border-radius: 3px"></br></a></h5>
+    <a onclick="myAccFunc()" href="javascript:void(0)" class="w3-button w3-block w3-left-align" id="buttonid">City</a>
+    <div id="demoAcc" class="w3-bar-block w3-hide w3-padding-large w3-medium" >
+        <a href="#astana" id="City" onclick="display(id)" class="w3-bar-item w3-button">All</a>
+        <a href="#astana" id="Astana" onclick="display(id)" class="w3-bar-item w3-button">Astana</a>
+        <a href="#almaty" id="Almaty" onclick="display(id)" class="w3-bar-item w3-button">Almaty</a>
+        <a href="#aktobe" id="Aktobe" onclick="display(id)" class="w3-bar-item w3-button">Aktobe</a>
+        <a href="#shymkent" id="Shymkent" onclick="display(id)" class="w3-bar-item w3-button">Shymkent</a>
+        <a href="#atyrau" id="Atyrau" onclick="display(id)" class="w3-bar-item w3-button">Atyrau</a>
+        <a href="#kostanay" id="Kostanay" onclick="display(id)" class="w3-bar-item w3-button">Kostanay</a>
+        <a href="#karaganda" id="Karaganda" onclick="display(id)" class="w3-bar-item w3-button">Karaganda</a>        </div>
+    <button class="btn-outline-success my-2 my-sm-0 w3-bar-item w3-button w3-padding text-center" style="background-color: limegreen; color: white; border-radius: 5px; margin-left: 5px" type="button" id="submit-button" onclick="getListings()"><strong>Search</strong></button>
+</nav>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:320px">
+
+
+    <!-- Top header -->
+    <ul class="topnav" style="background-color: #0f0f0f">
+        <li class="right" id="header"><a href="nurent/login"> log in / sign up</a></li>
+    </ul>
+
+
+    <!-- Listings grid -->
+    <div class="w3-row">
+        <div class="align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h2>Listings</h2>
+        </div>
+        <div id="listings">
+            <ul  id="listings-list"> </ul>
+        </div>
+    </div>
+ <script>
+        /* When the user clicks on the button,
+        toggle between hiding and showing the dropdown content */
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+        function display(id){
+            document.getElementById("buttonid").innerHTML=id;
+            var e = document.getElementById("buttonid");
+            var strUser = e.innerHTML;
+            console.log(strUser);
+        }
+        function filterFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            div = document.getElementById("myDropdown");
+            a = div.getElementsByTagName("a");
+            for (i = 0; i < a.length; i++) {
+                if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    a[i].style.display = "";
+                } else {
+                    a[i].style.display = "none";
+                }
+            }
+        }
+
+        // Accordion
+        function myAccFunc() {
+            var x = document.getElementById("demoAcc");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
 
 
 
+        // Script to open and close sidebar
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+    </script>
+
+
+</div>
 
 </body>
 </html>
