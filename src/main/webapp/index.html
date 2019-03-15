@@ -121,24 +121,23 @@
         }
 
         function getListings() {
-            var e = document.getElementById("buttonid");
-            var city = e.innerHTML;
-            var minprice = document.getElementById("minprice").value;
-            var maxprice = document.getElementById("maxprice").value;
-            var min_number_of_rooms = document.getElementById("minrooms").value;
-            var max_number_of_rooms = document.getElementById("maxrooms").value;
+            // var e = document.getElementById("buttonid");
+            // var city = e.innerHTML;
+            // var minprice = document.getElementById("minprice").value;
+            // var maxprice = document.getElementById("maxprice").value;
+            // var min_number_of_rooms = document.getElementById("minrooms").value;
+            // var max_number_of_rooms = document.getElementById("maxrooms").value;
 
-            console.log(city);
+            // console.log(city);
             $.ajax({
                 url : 'nurent/listings',
                 dataType: 'json',
                 method : 'GET',
                 data: {
-                    "city": city,
-                    "minprice" : minprice,
-                    "maxprice" : maxprice,
-                    "min_number_of_rooms" : min_number_of_rooms,
-                    "max_number_of_rooms" : max_number_of_rooms
+                    // "name": name,
+                    // "owner_name" : owner_name,
+                    // "current_holer_name" : current_holer_name,
+                    // "description" : description
                 },
                 success : function(r) {
                     listings = r;
@@ -159,14 +158,14 @@
                 }
                 console.log(im);
 //                 $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><td></tr></table></div></div></div>");
-                $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><p>Address:"+listings[i].building+"</p><p>Description:"+listings[i].description+"</p><p>Contact information:"+listings[i].contact_info+"</p><td></tr></table></div></div></div>");
+                $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+listings[i].name+"</p></b></h4><p>Owner: "+listings[i].owner_name+"</p><p>Current holder: "+listings[i].current_holder_name+"</p><p>Description: "+listings[i].description+"</p><td></tr></table></div></div></div>");
 
                 
                 var x = document.getElementsByTagName("img").item(i);
                 if(listings[i].image != null) {
                     x.setAttribute("src", im);
                 }
-                x.setAttribute("style", "width:250px;height:250px;")
+                x.setAttribute("style", "width:200px;height:200px;")
 
             }
 
@@ -177,7 +176,6 @@
         $(document).ready(function () {
             checkIfLoggedIn();
             getListings();
-
         });
 
     </script>
@@ -250,23 +248,22 @@
 <nav class="w3-sidebar w3-bar-block background w3-collapse w3-top line" style="z-index:3;width:320px" id="mySidebar">
     <div class="w3-container w3-display-container w3-padding-16">
         <i onclick="w3_close()" class="fa fa-remove w3-hide-large w3-button w3-display-topright"></i>
-        <h3 class="w3-wide"><b>NU Rent</b></h3>
+        <h3 class="w3-wide"><b>Library</b></h3>
     </div>
     <br class="w3-padding-64 w3-large w3-text-grey" style="font-weight:bold">
-    <h4 class="w3-bar-item w3-padding"><b>Price:</b></h4>
-    <h5 class="w3-bar-item w3-padding"><br>Minimum<input id="minprice" type="text" size="15" style="border-radius: 3px"></br></h5> <h5 class="w3-bar-item w3-padding"><br>Maximum <input id="maxprice" type="text" size="15" style="border-radius: 3px"><span class="sr-only ">(current)</span></br></a></h5>
-    <h4 class="w3-bar-item w3-padding"><b>Number of rooms:</b></h4>
-    <h5 class="w3-bar-item w3-padding"><br><input id="minrooms" type="text" size="7" style="border-radius: 3px"> - <input id="maxrooms" type="text" size="7" style="border-radius: 3px"></br></a></h5>
-    <a onclick="myAccFunc()" href="javascript:void(0)" class="w3-button w3-block w3-left-align" id="buttonid">City</a>
-    <div id="demoAcc" class="w3-bar-block w3-hide w3-padding-large w3-medium" >
-        <a href="#astana" id="City" onclick="display(id)" class="w3-bar-item w3-button">All</a>
-        <a href="#astana" id="Astana" onclick="display(id)" class="w3-bar-item w3-button">Astana</a>
-        <a href="#almaty" id="Almaty" onclick="display(id)" class="w3-bar-item w3-button">Almaty</a>
-        <a href="#aktobe" id="Aktobe" onclick="display(id)" class="w3-bar-item w3-button">Aktobe</a>
-        <a href="#shymkent" id="Shymkent" onclick="display(id)" class="w3-bar-item w3-button">Shymkent</a>
-        <a href="#atyrau" id="Atyrau" onclick="display(id)" class="w3-bar-item w3-button">Atyrau</a>
-        <a href="#kostanay" id="Kostanay" onclick="display(id)" class="w3-bar-item w3-button">Kostanay</a>
-        <a href="#karaganda" id="Karaganda" onclick="display(id)" class="w3-bar-item w3-button">Karaganda</a>        </div>
+    <h4 class="w3-bar-item w3-padding"><br>Find Book: </br></h4>
+    <h5 class="w3-bar-item w3-padding"><br>Book Title: <input id="minprice" type="text" size="15" style="border-radius: 3px"></br></h5>
+    <h5 class="w3-bar-item w3-padding"><br>Owner: <input id="maxprice" type="text" size="15" style="border-radius: 3px"></br></a></h5>
+    <!--<a onclick="myAccFunc()" href="javascript:void(0)" class="w3-button w3-block w3-left-align" id="buttonid">City</a>-->
+    <!--<div id="demoAcc" class="w3-bar-block w3-hide w3-padding-large w3-medium" >-->
+        <!--<a href="#astana" id="City" onclick="display(id)" class="w3-bar-item w3-button">All</a>-->
+        <!--<a href="#astana" id="Astana" onclick="display(id)" class="w3-bar-item w3-button">Astana</a>-->
+        <!--<a href="#almaty" id="Almaty" onclick="display(id)" class="w3-bar-item w3-button">Almaty</a>-->
+        <!--<a href="#aktobe" id="Aktobe" onclick="display(id)" class="w3-bar-item w3-button">Aktobe</a>-->
+        <!--<a href="#shymkent" id="Shymkent" onclick="display(id)" class="w3-bar-item w3-button">Shymkent</a>-->
+        <!--<a href="#atyrau" id="Atyrau" onclick="display(id)" class="w3-bar-item w3-button">Atyrau</a>-->
+        <!--<a href="#kostanay" id="Kostanay" onclick="display(id)" class="w3-bar-item w3-button">Kostanay</a>-->
+        <!--<a href="#karaganda" id="Karaganda" onclick="display(id)" class="w3-bar-item w3-button">Karaganda</a>        </div>-->
     <button class="btn-outline-success my-2 my-sm-0 w3-bar-item w3-button w3-padding text-center" style="background-color: limegreen; color: white; border-radius: 5px; margin-left: 5px" type="button" id="submit-button" onclick="getListings()"><strong>Search</strong></button>
 </nav>
 
@@ -283,7 +280,7 @@
     <!-- Listings grid -->
     <div class="w3-row">
         <div class="align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h2>Listings</h2>
+            <h2>Books</h2>
         </div>
         <div id="listings">
             <ul  id="listings-list"> </ul>

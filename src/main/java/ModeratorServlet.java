@@ -1,5 +1,5 @@
 import com.google.gson.*;
-import netscape.javascript.JSObject;
+
 
 import javax.json.Json;
 import javax.servlet.ServletContext;
@@ -55,21 +55,21 @@ public class ModeratorServlet {
         return context.getResourceAsStream("moderatorListings.html");
     }
 
-    @GET
-    @Path("listings/getPendingListings")
-    public Response getPendingListings(@Context HttpHeaders headers) {
-
-        if (authenticate(headers)) {
-            List<Listing> listings  = request.getListingsUnderModerationForModerator(getToken(headers));
-            Gson gson = new Gson();
-            String json = gson.toJson(listings);
-            return Response.ok(json).build();
-
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-    }
+//    @GET
+//    @Path("listings/getPendingListings")
+//    public Response getPendingListings(@Context HttpHeaders headers) {
+//
+//        if (authenticate(headers)) {
+//            List<Listing> listings  = request.getListingsUnderModerationForModerator(getToken(headers));
+//            Gson gson = new Gson();
+//            String json = gson.toJson(listings);
+//            return Response.ok(json).build();
+//
+//        } else {
+//            return Response.status(Response.Status.UNAUTHORIZED).build();
+//        }
+//
+//    }
 
     @POST
     @Path("listings/approve")

@@ -1,60 +1,50 @@
 public class Account {
-    String username;
-    String password;
-    String name;
-    String surname;
-    String email;
+    String fname;
+    String sname;
+    int id;
+    String office;
     String phone;
-    String banned;
-    String comment;
+    String email;
 
-    Account(String username, String password, String name, String surname, String email, String phone){
-        this.username = username;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
+    public Account(String fname, String sname, int id, String office, String phone, String email) {
+        this.fname = fname;
+        this.sname = sname;
+        this.id = id;
+        this.office = office;
         this.phone = phone;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFname() {
+        return fname;
+    }
+
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getOffice() {
+        return office;
+    }
+
+    public void setOffice(String office) {
+        this.office = office;
     }
 
     public String getPhone() {
@@ -65,23 +55,11 @@ public class Account {
         this.phone = phone;
     }
 
-    public String toString(){
-        return "username: "+username+" ;";
+    public String getEmail() {
+        return email;
     }
 
-    public String getBanned() {
-        return banned;
-    }
-
-    public void setBanned(String banned) {
-        this.banned = banned;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

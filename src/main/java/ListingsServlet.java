@@ -38,33 +38,18 @@ public class ListingsServlet {
                                         @QueryParam("max_number_of_rooms") String max_num_of_rooms
                                         ) {
 
-
+        System.out.println("from ListingsServlet");
         System.out.println(city);
         System.out.println(minprice);
         System.out.println(maxprice);
         System.out.println(min_num_of_rooms);
         System.out.println(max_num_of_rooms);
-        if(city.equals(("City"))){
-            city = null;
-        }
-        if(minprice.equals("")){
-            minprice = null;
-        }
-        if(maxprice.equals((""))){
-            maxprice = null;
-        }
-        if(min_num_of_rooms.equals("")){
-            min_num_of_rooms = null;
-        }
-        if(max_num_of_rooms.equals("")){
-            max_num_of_rooms = null;
-        }
-        String sort_by = null;
-        String order_by = null;
-        List<Listing> listings = request.getListingsByParameters(city, minprice, maxprice, min_num_of_rooms, max_num_of_rooms, sort_by, order_by);
+        System.out.println("t1");
+        List<Book> books = request.getBookssByParameters(null,null,null);
+        System.out.println(books.size());
 
         Gson gson = new Gson();
-        String json = gson.toJson(listings);
+        String json = gson.toJson(books);
         return Response.ok(json).build();
     }
 

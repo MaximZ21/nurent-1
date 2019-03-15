@@ -414,59 +414,26 @@ class Request {
     // possible sort_types: by_num_of_rooms , by_city_name , by_price ;
     // posiible sort_order: asc , desc (or)  ASC , DESC ;
     // if sort_order == null -> asc will be used
-    public List<Listing> getListingsByParameters(String city, String minprice, String maxprice,
-                                                 String min_num_of_rooms, String max_num_of_rooms,
-                                                 String sort_by, String order_by) {
-        LinkedList<Listing> list = new LinkedList<>();
+    public List<Book> getBookssByParameters(String name, String owner_name, String current_holder_name) {
+        LinkedList<Book> list = new LinkedList<>();
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String query1 = "SELECT * FROM Listings";
-            query1 += " WHERE status = 'visible'";
-            if (city != null) {
+            String query1 = "SELECT * FROM library.books";
+            query1 += " WHERE 1 = 1";
+            if (name != null) {
                 query1 += " AND";
-                query1 += " city = '" + city + "'";
+                query1 += " name is like '%" + name + "%'";
             }
-            if (minprice != null) {
+            if (owner_name != null) {
                 query1 += " AND";
-                query1 += " price >= " + minprice + "";
+                query1 += " owner_name is like '%" + owner_name + "%'";
             }
-            if (maxprice != null) {
+            if (current_holder_name != null) {
                 query1 += " AND";
-                query1 += " price <= " + maxprice + "";
-            }
-            if (min_num_of_rooms != null) {
-                query1 += " AND";
-                query1 += " num_of_rooms >= " + min_num_of_rooms + "";
-            }
-            if (max_num_of_rooms != null) {
-                query1 += " AND";
-                query1 += " num_of_rooms <= " + max_num_of_rooms + "";
-            }
-            if (sort_by != null) {
-                if (sort_by.equals("by_num_of_rooms")) {
-                    if (order_by == null || order_by.equals("asc") || order_by.equals("ASC")) {
-                        query1 += " ORDER BY num_of_rooms ASC";
-                    } else if (order_by.equals("desc") || order_by.equals("DESC")) {
-                        query1 += " ORDER BY num_of_rooms DESC";
-                    }
-                }
-                if (sort_by.equals("by_city_name")) {
-                    if (order_by == null || order_by.equals("asc") || order_by.equals("ASC")) {
-                        query1 += " ORDER BY city ASC";
-                    } else if (order_by.equals("desc") || order_by.equals("DESC")) {
-                        query1 += " ORDER BY city DESC";
-                    }
-                }
-                if (sort_by.equals("by_price")) {
-                    if (order_by == null || order_by.equals("asc") || order_by.equals("ASC")) {
-                        query1 += " ORDER BY price ASC";
-                    } else if (order_by.equals("desc") || order_by.equals("DESC")) {
-                        query1 += " ORDER BY price DESC";
-                    }
-                }
+                query1 += " current_holder_name is like '%= " + current_holder_name + "%'";
             }
             query1 += ";";
             System.out.println(query1);
@@ -474,21 +441,16 @@ class Request {
             Statement st = conn.createStatement();
             rs = st.executeQuery(query1);
             while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
+                Book book = new Book(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("owner_name"),
+                        rs.getInt("owner_id"),
+                        rs.getString("current_holder_name"),
+                        rs.getInt("current_holder_id"),
+                        rs.getString("description")
                 );
-                list.addLast(listing);
+                list.addLast(book);
             }
             return list;
         } catch (Exception ex) {
@@ -501,60 +463,60 @@ class Request {
         return null;
     }
 
-    public List<Listing> getListingsForUser(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            String psquery1 = "SELECT username FROM Accounts WHERE token = ?;";
-            conn = connector.getConnection();
-            ps = conn.prepareStatement(psquery1);
-            ps.setString(1, token);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            String psquery2 = "SELECT * FROM Listings WHERE username = ?;";
-            ps = conn.prepareStatement(psquery2);
-            ps.setString(1, username);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "Visiting profile");
-            ps.setString(4, "Success");
-            ps.setString(5, username);
-            ps.executeUpdate();
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return null;
-    }
+//    public List<Book> getListingsForUser(String token) {
+//        LinkedList<Book> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            String psquery1 = "SELECT username FROM Accounts WHERE token = ?;";
+//            conn = connector.getConnection();
+//            ps = conn.prepareStatement(psquery1);
+//            ps.setString(1, token);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            String psquery2 = "SELECT * FROM Listings WHERE username = ?;";
+//            ps = conn.prepareStatement(psquery2);
+//            ps.setString(1, username);
+//            rs = ps.executeQuery();
+//            while (rs.next()) {
+//                Book listing = new Book(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "Visiting profile");
+//            ps.setString(4, "Success");
+//            ps.setString(5, username);
+//            ps.executeUpdate();
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return null;
+//    }
 
     public void deleteListing(String id, String token) {
         Connector connector = new Connector();
@@ -836,305 +798,305 @@ class Request {
         }
     }
 
-    public List<Account> getAccountsForModerator(String token) {
-        LinkedList<Account> toReturn = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        try {
-            conn = connector.getConnection();
-            String psquery1 = "SELECT username FROM Moderators WHERE token = ?;";
-            ps = conn.prepareStatement(psquery1);
-            ps.setString(1, token);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                String psquery2 = "SELECT * FROM Accounts ORDER BY username ASC;";
-                ps = conn.prepareStatement(psquery2);
-                rs = ps.executeQuery();
-                while (rs.next()) {
-                    Account acc = new Account(
-                            rs.getString("username"),
-                            rs.getString("password"),
-                            rs.getString("name"),
-                            rs.getString("surname"),
-                            rs.getString("email"),
-                            rs.getString("phone")
-                    );
-                    toReturn.addLast(acc);
-                }
-                return toReturn;
-            }
-        } catch (Exception ex) {
-            System.out.println("Exception in getAccountsForModerator: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return null;
-    }
+//    public List<Account> getAccountsForModerator(String token) {
+//        LinkedList<Account> toReturn = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        try {
+//            conn = connector.getConnection();
+//            String psquery1 = "SELECT username FROM Moderators WHERE token = ?;";
+//            ps = conn.prepareStatement(psquery1);
+//            ps.setString(1, token);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                String psquery2 = "SELECT * FROM Accounts ORDER BY username ASC;";
+//                ps = conn.prepareStatement(psquery2);
+//                rs = ps.executeQuery();
+//                while (rs.next()) {
+//                    Account acc = new Account(
+//                            rs.getString("username"),
+//                            rs.getString("password"),
+//                            rs.getString("name"),
+//                            rs.getString("surname"),
+//                            rs.getString("email"),
+//                            rs.getString("phone")
+//                    );
+//                    toReturn.addLast(acc);
+//                }
+//                return toReturn;
+//            }
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getAccountsForModerator: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return null;
+//    }
 
-    public List<Listing> getListingsUnderModerationForModerator(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            conn = connector.getConnection();
-            String psquery1 = "SELECT username FROM Moderators WHERE token = ?;";
-            ps = conn.prepareStatement(psquery1);
-            ps.setString(1, token);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            String psquery2 = "SELECT * FROM Listings WHERE status = 'under moderation';";
-            ps = conn.prepareStatement(psquery2);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "get not approved listings (moderator)");
-            ps.setString(4, "Success");
-            ps.setString(4, "-");
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return list;
-    }
+//    public List<Listing> getListingsUnderModerationForModerator(String token) {
+//        LinkedList<Listing> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            conn = connector.getConnection();
+//            String psquery1 = "SELECT username FROM Moderators WHERE token = ?;";
+//            ps = conn.prepareStatement(psquery1);
+//            ps.setString(1, token);
+//            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            String psquery2 = "SELECT * FROM Listings WHERE status = 'under moderation';";
+//            ps = conn.prepareStatement(psquery2);
+//            rs = ps.executeQuery();
+//            while (rs.next()) {
+//                Listing listing = new Listing(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "get not approved listings (moderator)");
+//            ps.setString(4, "Success");
+//            ps.setString(4, "-");
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return list;
+//    }
 
-    public List<Listing> getListingsUnderModeration(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
-            conn = connector.getConnection();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery(query1);
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'under moderation';";
-            rs = st.executeQuery(query1);
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "get listings under moderation");
-            ps.setString(4, "Success");
-            ps.setString(5, "-");
-            ps.executeUpdate();
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getListingsUnderModeration: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return list;
-    }
+//    public List<Listing> getListingsUnderModeration(String token) {
+//        LinkedList<Listing> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
+//            conn = connector.getConnection();
+//            Statement st = conn.createStatement();
+//            rs = st.executeQuery(query1);
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'under moderation';";
+//            rs = st.executeQuery(query1);
+//            while (rs.next()) {
+//                Listing listing = new Listing(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "get listings under moderation");
+//            ps.setString(4, "Success");
+//            ps.setString(5, "-");
+//            ps.executeUpdate();
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getListingsUnderModeration: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return list;
+//    }
 
-    public List<Listing> getVisibleListings(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
-            conn = connector.getConnection();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery(query1);
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'visible';";
-            rs = st.executeQuery(query1);
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "get visible listings");
-            ps.setString(4, "Success");
-            ps.setString(5, "-");
-            ps.executeUpdate();
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getVisibleListings: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return list;
-    }
+//    public List<Listing> getVisibleListings(String token) {
+//        LinkedList<Listing> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
+//            conn = connector.getConnection();
+//            Statement st = conn.createStatement();
+//            rs = st.executeQuery(query1);
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'visible';";
+//            rs = st.executeQuery(query1);
+//            while (rs.next()) {
+//                Listing listing = new Listing(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "get visible listings");
+//            ps.setString(4, "Success");
+//            ps.setString(5, "-");
+//            ps.executeUpdate();
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getVisibleListings: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return list;
+//    }
 
-    public List<Listing> getHiddenListings(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
-            conn = connector.getConnection();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery(query1);
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'hidden';";
-            rs = st.executeQuery(query1);
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "get hidden listings");
-            ps.setString(4, "Success");
-            ps.setString(5, "-");
-            ps.executeUpdate();
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getHiddenListings: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return list;
-    }
+//    public List<Listing> getHiddenListings(String token) {
+//        LinkedList<Listing> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
+//            conn = connector.getConnection();
+//            Statement st = conn.createStatement();
+//            rs = st.executeQuery(query1);
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'hidden';";
+//            rs = st.executeQuery(query1);
+//            while (rs.next()) {
+//                Listing listing = new Listing(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "get hidden listings");
+//            ps.setString(4, "Success");
+//            ps.setString(5, "-");
+//            ps.executeUpdate();
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getHiddenListings: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return list;
+//    }
 
-    public List<Listing> getNotApprovedListings(String token) {
-        LinkedList<Listing> list = new LinkedList<>();
-        Connector connector = new Connector();
-        Connection conn = connector.getConnection();
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        String username = "";
-        try {
-            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
-            conn = connector.getConnection();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery(query1);
-            if (rs.next()) {
-                username = rs.getString("username");
-            }
-            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'not approved';";
-            rs = st.executeQuery(query1);
-            while (rs.next()) {
-                Listing listing = new Listing(rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("title"),
-                        rs.getString("city"),
-                        rs.getString("building"),
-                        rs.getInt("num_of_rooms"),
-                        rs.getString("description"),
-                        rs.getInt("price"),
-                        rs.getString("postdate"),
-                        rs.getString("contact_info"),
-                        rs.getString("status"),
-                        rs.getString("comment"),
-                        rs.getString("image")
-                );
-                list.addLast(listing);
-            }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "get not approved listings");
-            ps.setString(4, "Success");
-            ps.setString(5, "-");
-            ps.executeUpdate();
-            return list;
-        } catch (Exception ex) {
-            System.out.println("Exception in getNotApprovedListings: " + ex.getMessage());
-        } finally {
-            DbUtils.closeQuietly(rs);
-            DbUtils.closeQuietly(ps);
-            DbUtils.closeQuietly(conn);
-        }
-        return list;
-    }
+//    public List<Listing> getNotApprovedListings(String token) {
+//        LinkedList<Listing> list = new LinkedList<>();
+//        Connector connector = new Connector();
+//        Connection conn = connector.getConnection();
+//        ResultSet rs = null;
+//        PreparedStatement ps = null;
+//        String username = "";
+//        try {
+//            String query1 = "SELECT username FROM Accounts WHERE token = '" + token + "';";
+//            conn = connector.getConnection();
+//            Statement st = conn.createStatement();
+//            rs = st.executeQuery(query1);
+//            if (rs.next()) {
+//                username = rs.getString("username");
+//            }
+//            query1 = "SELECT * FROM Listings WHERE username = '" + username + "' AND status = 'not approved';";
+//            rs = st.executeQuery(query1);
+//            while (rs.next()) {
+//                Listing listing = new Listing(rs.getInt("id"),
+//                        rs.getString("username"),
+//                        rs.getString("title"),
+//                        rs.getString("city"),
+//                        rs.getString("building"),
+//                        rs.getInt("num_of_rooms"),
+//                        rs.getString("description"),
+//                        rs.getInt("price"),
+//                        rs.getString("postdate"),
+//                        rs.getString("contact_info"),
+//                        rs.getString("status"),
+//                        rs.getString("comment"),
+//                        rs.getString("image")
+//                );
+//                list.addLast(listing);
+//            }
+//            ps = conn.prepareStatement(LogStatement);
+//            ps.setString(1, getTime());
+//            ps.setString(2, username);
+//            ps.setString(3, "get not approved listings");
+//            ps.setString(4, "Success");
+//            ps.setString(5, "-");
+//            ps.executeUpdate();
+//            return list;
+//        } catch (Exception ex) {
+//            System.out.println("Exception in getNotApprovedListings: " + ex.getMessage());
+//        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+//        }
+//        return list;
+//    }
 
     public void banAccountForModerator(String username, String token) {
         Connector connector = new Connector();

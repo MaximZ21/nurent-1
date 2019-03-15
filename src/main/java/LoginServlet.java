@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javafx.util.Pair;
 
 @Path("/login")
 public class LoginServlet {
