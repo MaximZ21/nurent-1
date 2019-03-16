@@ -27,6 +27,7 @@ public class SignupServlet {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response signUp(AccountSignup account) {
+        System.out.println("signup");
         String username = account.getUsername();
         String password = account.getPassword();
         String firstName = account.getName();

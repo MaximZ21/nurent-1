@@ -30,6 +30,7 @@
 
 
         function getBook() {
+            console.log("tryong to get book");
             // var e = document.getElementById("buttonid");
             // var city = e.innerHTML;
             // var minprice = document.getElementById("minprice").value;
@@ -50,6 +51,7 @@
                 },
                 success : function(r) {
                     book = r;
+                    console.log(book);
                 }
             });
         }
@@ -57,7 +59,7 @@
 
         $(document).ready(function () {
             getBook();
-            $('#bookSpace').appendChild()
+            $('#bookSpace').innerHTML("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+book.name+"</p></b></h4><p>Owner: "+book.owner_name+"</p><p>Current holder: "+book.current_holder_name+"</p><p>Description: "+books[i].description+"</p><td></tr></table></div></div></div>");
             var token = localStorage.getItem("token");
             if (!token) {
                 window.location.replace("/");
