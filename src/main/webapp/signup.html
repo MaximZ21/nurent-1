@@ -138,35 +138,85 @@
             color: #ff7677;
         }
 
+        .signup-page {
+            width: 360px;
+            padding: 8% 0 0;
+            margin: auto;
+        }
+
+
         .form {
             position: relative;
             z-index: 1;
             background: #FFFFFF;
             max-width: 360px;
             margin: 0 auto 100px;
-            padding: 45px;
+            padding: 25px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
 
+        .form input {
+            font-family: "Roboto", sans-serif;
+            outline: 0;
+            background: #f2f2f2;
+            width: 100%;
+            border: 0;
+            margin: 0 0 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form .message {
+            margin: 15px 0 0;
+            color: #b3b3b3;
+            font-size: 12px;
+        }
+        .form .message a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
         body {
-            background: #76cdd8; /* fallback for old browsers */
+            background:linear-gradient(to top left, #ebebeb 70%, #fff 70.1%);
+            <!--background: #76cdd8; /* fallback for old browsers */
             font-family: "Roboto", sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+
+        .form button {
+            font-family: "Roboto", sans-serif;
+            text-transform: uppercase;
+            outline: 0;
+            background: #76cdd8;
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            color: #FFFFFF;
+            font-size: 14px;
+            -webkit-transition: all 0.3 ease;
+            transition: all 0.3 ease;
+            cursor: pointer;
+        }
+
+        .form button:hover,.form button:active,.form button:focus {
+            background: #43A047;
         }
 
     </style>
 
 </head>
 <body>
+<div class="signup-page">
 
-<div>
 
     <div class="form">
         <h1>Sign Up</h1>
-    <fieldset>
-        <legend>Sign Up</legend>
+    <fieldset class="signup-form">
+
+        <!--<legend>Sign Up</legend>-->
 
         <div class="error" id="incorrectSignup"></div>
         <div class="error" id="incorrectEmail"></div>
@@ -176,47 +226,25 @@
         <div class="error" id="incorrectLastName"></div>
         <div class="error" id="incorrectPhoneNumber"></div>
 
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required />
-        </div>
 
-        <div>
-            <label for="signUpPassword">Password:</label>
-            <input type="password" id="signUpPassword" name="signUpPassword" minlength="5" required/>
-        </div>
+        <div><input type="text" id="username" name="username" placeholder="username" required/></div>
 
-        <div>
-            <label for="signUpEmail">Email:</label>
-            <input type="email" id="signUpEmail" name="signUpEmail" required />
-        </div>
+        <div><input type="password" id="signUpPassword" name="signUpPassword" placeholder="password" minlength="5" required/></div>
 
-        <div>
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName">
-        </div>
+        <div><input type="email" id="signUpEmail" name="signUpEmail" placeholder="email" required /></div>
 
-        <div>
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="firstName">
-        </div>
+        <div><input type="text" id="firstName" name="firstName" placeholder="first name"></div>
 
-        <div>
-            <label for="phone">Phone number: +7 </label>
-            <input type="text" id="phone" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
-        </div>
+        <div><input type="text" id="lastName" name="firstName" placeholder="last name"></div>
+
+        <div><input type="text" id="phone" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"  ></div>
 
 
-        <input type="submit" id="signUpButton" value="Sign up">
+        <button type="submit" id="loginButton" value="Sign Up">Register</button>
+
+        <p class="message">Alreday have an account? <a href="login">Log in</a></p>
     </fieldset>
     </div>
-
-    <div>
-        <a href="login">Log In</a>
-    </div>
-
-
 </div>
-
 </body>
 </html>
