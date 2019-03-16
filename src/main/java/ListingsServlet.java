@@ -65,15 +65,20 @@ public class ListingsServlet {
     @Path("getBookInfo")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getListByParameters(@QueryParam("id") int id) {
-
         System.out.println("from getBookInfo");
         System.out.println(id);
-        System.out.println("t1");
-        List<Book> books = request.getBookssByParameters(null,null,null);
-        System.out.println(books.size());
-
+        Book book = request.getBookInfo(id);
+        System.out.println(book.name);
+        BookPost bookPost = new BookPost();
+        bookPost.setId(Integer.toString(book.getId()));
+        bookPost.setName(book.getName());
+        bookPost.setOwner_name(book.getOwner_name());
+        bookPost.setOwner_id(Integer.toString(book.getOwner_id()));
+        bookPost.setCurrent_holder_id(Integer.toString(book.getCurrent_holder_id()));
+        bookPost.setCurrent_holder_name(book.getCurrent_holder_name());
+        bookPost.setDescription(book.getDescription());
         Gson gson = new Gson();
-        String json = gson.toJson(books);
+        String json = gson.toJson(bookPost);
         return Response.ok(json).build();
     }
 

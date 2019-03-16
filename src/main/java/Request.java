@@ -17,6 +17,39 @@ class Request {
             "VALUES(?,?,?,?,?);";
 
 
+    public Book getBookInfo(int id){
+        Book book = null;
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            String query1 = "SELECT * FROM library.books WHERE id = ? ;";
+            System.out.println(query1);
+            conn = connector.getConnection();
+            Statement st = conn.createStatement();
+            rs = st.executeQuery(query1);
+            if (rs.next()) {
+                book = new Book(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("owner_name"),
+                        rs.getInt("owner_id"),
+                        rs.getString("current_holder_name"),
+                        rs.getInt("current_holder_id"),
+                        rs.getString("description")
+                );
+            }
+            return book;
+        } catch (Exception ex) {
+            System.out.println("Exception in getBookInfo: " + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return book;
+    }
 
     public String generateToken(String username) {
         String uuid = UUID.randomUUID().toString();

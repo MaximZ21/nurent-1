@@ -15,6 +15,7 @@
     <script type="text/javascript">
         // n - name of image
         var n = "";
+        var book;
         // function buildInput() {
         //     for(var i=1; i<=24; i++){
         //         console.log(i);
@@ -27,84 +28,37 @@
         // }
 
 
-        function sendListing() {
 
+        function getBook() {
+            // var e = document.getElementById("buttonid");
+            // var city = e.innerHTML;
+            // var minprice = document.getElementById("minprice").value;
+            // var maxprice = document.getElementById("maxprice").value;
+            // var min_number_of_rooms = document.getElementById("minrooms").value;
+            // var max_number_of_rooms = document.getElementById("maxrooms").value;
 
-
-            var name = $("input[name=title]").val();
-            console.log(name);
-
-
-
-            // if (!title || !city || !building || !number_of_rooms || !description || !price || !contact_info) {
-            //     document.title = 'Fill every fields';
-            //     return;
-            // }
-
-           var token = localStorage.getItem("token");
-
-            var book = {
-                name: name,
-                id: 11,
-                owner_name: "a",
-                owner_id: 11,
-                current_holder_name: "a",
-                current_holder_id: 11,
-                description: "a"
-
-                // description: description,
-                // image: image
-            };
-
-
-
-
+            // console.log(city);
             $.ajax({
-                url: "add",
-                method: 'POST',
-                type: 'POST',
-                headers: {
-                    "Authorization": "Bearer " + token
+                url : 'nurent/listings/getBookInfo?' + $.param({"id": JSON.parse(localStorage.getItem("passBookId"))}),
+                dataType: 'json',
+                method : 'GET',
+                data: {
+                    // "name": name,
+                    // "owner_name" : owner_name,
+                    // "current_holer_name" : current_holer_name,
+                    // "description" : description
                 },
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(book),
-                processData: true,
-                statusCode : {
-                    401: function (r) {
-                        console.log(r);
-                        localStorage.removeItem("token");
-                        window.location.replace("/nurent/login");
-                    }
-                },
-                success: function (r) {
-                    console.log("success");
-                    window.location.replace("/nurent/profile");
+                success : function(r) {
+                    book = r;
+                    showBook();
                 }
-            })
-
-            // $.ajax({
-            //     url: "add",
-            //     method: 'POST',
-            //     type: 'POST',
-            //     headers: {
-            //         "Authorization": "Bearer " + token
-            //     },
-            //     statusCode : {
-            //         401: function (r) {
-            //             console.log(r);
-            //             localStorage.removeItem("token");
-            //             window.location.replace("/nurent/login");
-            //         }
-            //     },
-            //     success: function (r) {
-            //         // console.log("success");
-            //         // window.location.replace("/nurent/profile");
-            //     }
-            // });
-
+            });
         }
-        $(document).ready(function () {
 
+
+        $(document).ready(function () {
+            getBook();
+            $('#bookSpace').appendChild()
             var token = localStorage.getItem("token");
             if (!token) {
                 window.location.replace("/");
@@ -226,15 +180,8 @@
 </head>
 <body>
 
-    <div class="form">
-        <br>
-            Title:<br>
-            <input type="text" name="title"><br>
-            Description:<br>
-            <textarea name="description" style="width:250px;height:150px;"></textarea><br>
-            <button type="button" value="Submit" id="submit-button" style="margin-bottom: 20px">Submit</button>
-            <input type="button" value="Upload Image" id="upload-button">
-            <button id="cancel-button" style="background-color: #636363" onclick="cancelFunction()">Cancel</button>
+    <div class="form" id="bookSpace">
+
         </form>
     </div>
 
