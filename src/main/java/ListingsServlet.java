@@ -53,4 +53,28 @@ public class ListingsServlet {
         return Response.ok(json).build();
     }
 
+    @GET
+    @Path("chosenBook")
+    @Produces({MediaType.TEXT_HTML})
+    public InputStream chosenBook() throws FileNotFoundException {
+        System.out.println("hello from chosenBook");
+        return context.getResourceAsStream("chosenBook.html");
+    }
+
+    @GET
+    @Path("getBookInfo")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getListByParameters(@QueryParam("id") int id) {
+
+        System.out.println("from getBookInfo");
+        System.out.println(id);
+        System.out.println("t1");
+        List<Book> books = request.getBookssByParameters(null,null,null);
+        System.out.println(books.size());
+
+        Gson gson = new Gson();
+        String json = gson.toJson(books);
+        return Response.ok(json).build();
+    }
+
 }

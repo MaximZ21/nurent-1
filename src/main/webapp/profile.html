@@ -11,7 +11,7 @@
     <script src="/scripts/jquery.min.js"></script>
     <script src="/scripts/lodash.min.js"></script>
     <script type="text/javascript">
-        var listings = [];
+        var books = [];
         function logout() {
             localStorage.removeItem("token");
             window.location.replace("/");
@@ -56,47 +56,48 @@
                     }
                 },
                 success: function (r) {
-                    listings = r;
+                    books = r;
                     updateList();
                 }
             })
         }
         function updateList() {
             $("#listings-list").empty();
-            for (var i in listings) {
-                console.log(listings[i].id);
+            for (var i in books) {
+                console.log(books[i].id);
                 var comment;
-                if(listings[i].comment == null){
-                    comment = "no comment";
-                }else{
-                    comment = listings[i].comment;
+                // if(books[i].comment == null){
+                //     comment = "no comment";
+                // }else{
+                //     comment = books[i].comment;
+                // }
+                if(true) {
+                    $("#listings-list").append("<li class='approved-listing'>" + books[i].name + ", Owner " + books[i].owner_name
+                        + ", Current Holder: " + books[i].current_holder_name
+                        + ", Description: " + books[i].description + "  "
+                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>")
                 }
-                if(listings[i].status === "visible") {
-                    $("#listings-list").append("<li class='approved-listing'>" + listings[i].title + ", Price: " + listings[i].price
-                        + ", City: " + listings[i].city
-                        + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + "  "
-                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>"+ "</li>")
-                } else if (listings[i].status === "hidden") {
-                    $("#listings-list").append("<li class='hidden-listing'>" + listings[i].title + ", Price: " + listings[i].price
-                        + ", City: " + listings[i].city
-                        + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + "  "
-                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button'>show</button>" + "</li>")
-                } else if (listings[i].status === "under moderation") {
-                    $("#listings-list").append("<li class='pending-listing'>" + listings[i].title + ", Price: " + listings[i].price
-                        + ", City: " + listings[i].city
-                        + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + "  "
-                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>")
-                } else if(listings[i].status === "not approved") {
-                    $("#listings-list").append("<li class='disapproved-listing'>" + listings[i].title + ", Price: " + listings[i].price
-                        + ", City: " + listings[i].city
-                        + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + ", Status: " + listings[i].status + ", Comment: " + comment + "  "
-                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>");
-                }
+                //  else if (listings[i].status === "hidden") {
+                //     $("#listings-list").append("<li class='hidden-listing'>" + listings[i].title + ", Price: " + listings[i].price
+                //         + ", City: " + listings[i].city
+                //         + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + "  "
+                //         + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button'>show</button>" + "</li>")
+                // } else if (listings[i].status === "under moderation") {
+                //     $("#listings-list").append("<li class='pending-listing'>" + listings[i].title + ", Price: " + listings[i].price
+                //         + ", City: " + listings[i].city
+                //         + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + "  "
+                //         + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>")
+                // } else if(listings[i].status === "not approved") {
+                //     $("#listings-list").append("<li class='disapproved-listing'>" + listings[i].title + ", Price: " + listings[i].price
+                //         + ", City: " + listings[i].city
+                //         + ", Building: " + listings[i].building + ", Postdate: " + listings[i].postdate + ", Description: " + listings[i].description + ", Status: " + listings[i].status + ", Comment: " + comment + "  "
+                //         + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button' style='display:none;'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>");
+                // }
             }
         }
         function deleteListing(button) {
             var index = $(".delete-listing").index(button);
-            var id = listings[index].id;
+            var id = books[index].id;
             var token = localStorage.getItem("token");
             $.ajax({
                 url: "profile/deletelisting?" + $.param({"id": id}),
@@ -179,7 +180,7 @@
             });
         })
     </script>
-        </script>
+
     <style>
         .column{
             float: left;
@@ -235,6 +236,7 @@
     <p class="w3-right">
         <i><a href="/">Go back</a></i>
         <i><a href="/nurent/profile/create">Create a Listing</a></i>
+        <i><a href="/nurent/listings/chosenBook">CB</a></i>
         <i><button id="logout" ONCLICK="sendLogout()">Logout</button></i>
     </p>
 </header>

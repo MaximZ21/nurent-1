@@ -80,7 +80,7 @@
         }
         .column{
             float: left;
-            width:100%;
+            width:50%;
             padding:10px;
         }
 
@@ -111,7 +111,7 @@
 
     <script type="text/javascript">
 
-        var listings = [];
+        var books = [];
 
         function checkIfLoggedIn() {
             var token = localStorage.getItem("token");
@@ -121,7 +121,7 @@
             }
         }
 
-        function getListings() {
+        function getBooks() {
             // var e = document.getElementById("buttonid");
             // var city = e.innerHTML;
             // var minprice = document.getElementById("minprice").value;
@@ -141,7 +141,7 @@
                     // "description" : description
                 },
                 success : function(r) {
-                    listings = r;
+                    books = r;
                     updateList();
 
                 }
@@ -151,19 +151,19 @@
         function updateList() {
             $("#listings-list").empty();
 
-            for (var i in listings) {
+            for (var i in books) {
 
-                console.log(listings[i].title);
-                if(listings[i].image != null) {
-                    var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + listings[i].image;
+                console.log(books[i].title);
+                if(books[i].image != null) {
+                    var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + books[i].image;
                 }
                 console.log(im);
 //                 $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><td></tr></table></div></div></div>");
-                $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+listings[i].name+"</p></b></h4><p>Owner: "+listings[i].owner_name+"</p><p>Current holder: "+listings[i].current_holder_name+"</p><p>Description: "+listings[i].description+"</p><td></tr></table></div></div></div>");
+                $("#listings-list").append("<a href=\"nurent/listings/chosenBook\"><div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+books[i].name+"</p></b></h4><p>Owner: "+books[i].owner_name+"</p><p>Current holder: "+books[i].current_holder_name+"</p><p>Description: "+books[i].description+"</p><td></tr></table></div></div></div></a>");
 
                 
                 var x = document.getElementsByTagName("img").item(i);
-                if(listings[i].image != null) {
+                if(books[i].image != null) {
                     x.setAttribute("src", im);
                 }
                 x.setAttribute("style", "width:200px;height:200px;")
@@ -173,11 +173,41 @@
 
         }
 
+        function bookChosen(c) {
+
+            var index = $(".column").index(c);
+            console.log(index);
+            var id = books[index].id;
+            var token = localStorage.getItem("token");
+            localStorage.setItem("passBookId",JSON.stringify(id));
+            $.ajax({
+                url: "nurent/listings/chosenBook",
+                method: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                statusCode : {
+                    401: function (r) {
+                        console.log(r);
+                    }
+                },
+                success: function (r) {
+                    getBooks();
+                }
+            })
+        }
+
 
         $(document).ready(function() {
 
             checkIfLoggedIn();
-            getListings();
+            getBooks();
+            $(document).on('click', '.column', function (e) {
+                console.log("container clicked");
+                console.log(e)
+                console.log(e.currentTarget);
+                bookChosen(e.currentTarget);
+            });
         });
 
     </script>

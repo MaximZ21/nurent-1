@@ -40,7 +40,7 @@ public class ProfileServlet {
         String token = auth.get(0).substring("Bearer".length()).trim();
 
         if (request.checkToken(token)) {
-            List<Book> books = request.getListingsForUser(token);
+            List<Book> books = request.getBooksForUser(token);
             Gson gson = new Gson();
             String json = gson.toJson(books);
             return Response.ok(json).build();
@@ -61,7 +61,7 @@ public class ProfileServlet {
         }
         String token = auth.get(0).substring("Bearer".length()).trim();
         if (request.checkToken(token)) {
-            request.deleteListing(listingId, token);
+            request.deleteBook(listingId, token);
             return Response.ok().build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -120,8 +120,9 @@ public class ProfileServlet {
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addListing(@Context HttpHeaders headers, BookPost book) {
+        System.out.println(book);
         List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
-        System.out.println(book.name);
+        System.out.println(book.getName());
         if (auth == null || auth.size() == 0) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -135,7 +136,7 @@ public class ProfileServlet {
         //System.out.println(listing.getImage());
         //System.out.println(NumberUtils.toLong(listing.getImage()));
         if (request.checkToken(token)) {
-            request.addBook(book.name, token);
+            request.addBook(book.getName(), token);
             return Response.ok().build();
         } else {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -162,6 +163,8 @@ public class ProfileServlet {
         return Response.ok().build();
 
     }
+
+
 
 
     private boolean isCorrectAuthHeader(String header) {
