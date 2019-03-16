@@ -427,7 +427,7 @@ class Request {
         return null;
     }
 
-    public List<Book> getListingsForUser(String token) {
+    public List<Book> getBooksForUser(String token) {
         LinkedList<Book> list = new LinkedList<>();
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
@@ -459,16 +459,9 @@ class Request {
                 );
                 list.addLast(book);
             }
-//            ps = conn.prepareStatement(LogStatement);
-//            ps.setString(1, getTime());
-//            ps.setString(2, username);
-//            ps.setString(3, "Visiting profile");
-//            ps.setString(4, "Success");
-//            ps.setString(5, username);
-//            ps.executeUpdate();
             return list;
         } catch (Exception ex) {
-            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
+            System.out.println("Exception in getBooksForUser: " + ex.getMessage());
         } finally {
             DbUtils.closeQuietly(rs);
             DbUtils.closeQuietly(ps);
@@ -477,61 +470,40 @@ class Request {
         return null;
     }
 
-    public void deleteListing(String id, String token) {
+    public void deleteBook(String id, String token) {
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
         ResultSet rs = null;
         PreparedStatement ps = null;
-        String username1 = "";
-        String username2 = "";
+        int id1 = -1;
+        int id2 = -1;
         try {
-            String psquery1 = "SELECT username FROM Accounts WHERE token = ?;";
+            String psquery1 = "SELECT id FROM library.users WHERE token = ?;";
             conn = connector.getConnection();
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, token);
             rs = ps.executeQuery();
             if (rs.next()) {
-                username1 = rs.getString("username");
+                id1 = rs.getInt("id");
             }
-            String psquery2 = "SELECT username FROM Listings WHERE id = ?;";
+            String psquery2 = "SELECT owner_id FROM library.books WHERE id = ?;";
             ps = conn.prepareStatement(psquery2);
-            ps.setString(1, id);
+            ps.setInt(1, Integer.parseInt(id));
             rs = ps.executeQuery();
             if (rs.next()) {
-                username2 = rs.getString("username");
+                id2 = rs.getInt("owner_id");
             }
-            if (username1.equals(username2)) {
-                String psquery3 = "DELETE FROM Listings WHERE id = ?;";
+            if (id1 == id2) {
+                String psquery3 = "DELETE FROM library.books WHERE id = ?;";
                 ps = conn.prepareStatement(psquery3);
-                ps.setString(1, id);
-                ps.executeUpdate();
-                ps = conn.prepareStatement(LogStatement);
-                ps.setString(1, getTime());
-                ps.setString(2, username1);
-                ps.setString(3, "Delete Listing");
-                ps.setString(4, "Success");
-                ps.setString(5, username1);
+                ps.setInt(1, Integer.parseInt(id));
                 ps.executeUpdate();
             } else {
-                ps = conn.prepareStatement(LogStatement);
-                ps.setString(1, getTime());
-                ps.setString(2, username1);
-                ps.setString(3, "Delete Listing");
-                ps.setString(4, "Failure");
-                ps.setString(5, "UNAUTHORIZED");
-                ps.executeUpdate();
+                //
             }
         } catch (Exception ex) {
             try {
                 System.out.println("Exception in addListing() " + ex.getMessage());
-                conn = connector.getConnection();
-                ps = conn.prepareStatement(LogStatement);
-                ps.setString(1, getTime());
-                ps.setString(2, username1);
-                ps.setString(3, "Delete Listing");
-                ps.setString(4, "Failure");
-                ps.setString(5, ex.getMessage());
-                ps.executeUpdate();
             } catch (Exception ex2) {
                 System.out.println("Exception in deleteListing() 2" + ex.getMessage());
             }

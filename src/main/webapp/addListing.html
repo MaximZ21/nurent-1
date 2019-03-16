@@ -31,7 +31,8 @@
 
 
 
-            var title = $("input[name=title]").val();
+            var name = $("input[name=title]").val();
+            console.log(name);
 
 
 
@@ -42,8 +43,15 @@
 
            var token = localStorage.getItem("token");
 
-            var data = {
-                title: title,
+            var book = {
+                name: name,
+                id: 11,
+                owner_name: "a",
+                owner_id: 11,
+                current_holder_name: "a",
+                current_holder_id: 11,
+                description: "a"
+
                 // description: description,
                 // image: image
             };
@@ -59,7 +67,7 @@
                     "Authorization": "Bearer " + token
                 },
                 contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify(data),
+                data: JSON.stringify(book),
                 processData: true,
                 statusCode : {
                     401: function (r) {
