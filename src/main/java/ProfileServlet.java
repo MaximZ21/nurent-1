@@ -165,6 +165,8 @@ public class ProfileServlet {
     }
 
 
+
+
     private boolean isCorrectAuthHeader(String header) {
         return header != null && header.toLowerCase().startsWith("bearer" + " ");
     }
