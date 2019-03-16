@@ -27,9 +27,11 @@ class Request {
             String query1 = "SELECT * FROM library.books WHERE id = ? ;";
             System.out.println(query1);
             conn = connector.getConnection();
-            Statement st = conn.createStatement();
-            rs = st.executeQuery(query1);
+            PreparedStatement ps1 = conn.prepareStatement(query1);
+            ps1.setInt(1,id);
+            rs = ps1.executeQuery();
             if (rs.next()) {
+                System.out.println("1");
                 book = new Book(
                         rs.getInt("id"),
                         rs.getString("name"),
@@ -40,6 +42,7 @@ class Request {
                         rs.getString("description")
                 );
             }
+            System.out.println(book.name);
             return book;
         } catch (Exception ex) {
             System.out.println("Exception in getBookInfo: " + ex.getMessage());

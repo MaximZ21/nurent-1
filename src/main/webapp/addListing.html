@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Add a listings</title>
-    <script src="/scripts/jquery.min.js"></script>
-    <script src="/scripts/lodash.min.js"></script>
+    <script src="/scripts/jquery-3.3.1.min.js"></script>
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
     <script type="text/javascript">
         cloudinary.applyUploadWidget('#upload_widget_opener',{
@@ -103,6 +102,7 @@
             // });
 
         }
+
         $(document).ready(function () {
 
             var token = localStorage.getItem("token");
@@ -129,7 +129,7 @@
 
 
 
-        })
+        });
 
         function cancelFunction() {
             window.location.replace("/nurent/profile");

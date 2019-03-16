@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -64,7 +65,7 @@ public class ListingsServlet {
     @GET
     @Path("getBookInfo")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getListByParameters(@QueryParam("id") int id) {
+    public Response getBookInfo(@Context HttpHeaders headers, @QueryParam("id") int id) {
         System.out.println("from getBookInfo");
         System.out.println(id);
         Book book = request.getBookInfo(id);
