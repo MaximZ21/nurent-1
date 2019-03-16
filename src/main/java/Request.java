@@ -24,7 +24,7 @@ class Request {
         Connection conn = connector.getConnection();
         PreparedStatement ps = null;
         try {
-            String psquery1 = "UPDATE bitlab.Accounts SET token = ? WHERE username = ?;";
+            String psquery1 = "UPDATE library.users SET library.users.token = ? WHERE username = ?;";
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, uuid);
             ps.setString(2, username);
@@ -67,7 +67,7 @@ class Request {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String psquery1 = "SELECT username FROM bitlab.Accounts WHERE token = ?;";
+            String psquery1 = "SELECT username FROM library.users WHERE token = ?;";
             conn = connector.getConnection();
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, token);
@@ -111,14 +111,14 @@ class Request {
         PreparedStatement ps = null;
         String username = "";
         try {
-            String psquery1 = "SELECT username FROM bitlab.Accounts WHERE token = ?;";
+            String psquery1 = "SELECT username FROM library.users WHERE token = ?;";
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, token_to_delete);
             rs = ps.executeQuery();
             if (rs.next()) {
                 username = rs.getString("username");
             }
-            String psquery2 = "UPDATE bitlab.Accounts SET token = NULL WHERE token = ?;";
+            String psquery2 = "UPDATE library.users SET token = NULL WHERE token = ?;";
             ps = conn.prepareStatement(psquery2);
             ps.setString(1, token_to_delete);
             ps = conn.prepareStatement(LogStatement);
@@ -169,13 +169,13 @@ class Request {
         }
     }
 
-    public void addNewUser(String username, String password, String name, String surname, String phone) throws Exception {
+    public void addNewUser(String username, String password, String name, String surname, String phone, String email) throws Exception {
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String psquery1 = "SELECT * FROM bitlab.Accounts WHERE username = ?;";
+            String psquery1 = "SELECT * FROM library.users WHERE username = ?;";
             conn = connector.getConnection();
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, username);
@@ -183,37 +183,31 @@ class Request {
             if (rs.next()) {
                 throw new Exception("User with such username already exists");
             }
-            String psquery2 = "SELECT * FROM Accounts WHERE phone = ?;";
+            String psquery2 = "SELECT * FROM library.users WHERE phone = ?;";
             ps = conn.prepareStatement(psquery2);
             ps.setString(1, phone);
             rs = ps.executeQuery();
             if (rs.next()) {
                 throw new Exception("User with such phone number already exists");
             }
-            String psquery3 = "INSERT INTO Accounts(username, password, name, surname, phone) " +
-                    "VALUES(?,?,?,?,?);";
+            String psquery10 = "SELECT * FROM library.users WHERE email = ?;";
+            ps = conn.prepareStatement(psquery10);
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                throw new Exception("User with such email already exists");
+            }
+            String psquery3 = "INSERT INTO library.users(fname,sname,username, password, email, phone) " +
+                    "VALUES(?,?,?,?,?,?);";
             ps = conn.prepareStatement(psquery3);
-            ps.setString(1, username);
-            ps.setString(2, generateHash(password));
-            ps.setString(3, name);
-            ps.setString(4, surname);
-            ps.setString(5, phone);
-            ps.executeUpdate();
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "Registration");
-            ps.setString(4, "Success");
-            ps.setString(5, username);
+            ps.setString(1, name);
+            ps.setString(2, surname);
+            ps.setString(3, username);
+            ps.setString(4, generateHash(password));
+            ps.setString(5,email);
+            ps.setString(6, phone);
             ps.executeUpdate();
         } catch (Exception ex) {
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "Registration");
-            ps.setString(4, "Failure");
-            ps.setString(5, ex.getMessage());
-            ps.executeUpdate();
             System.out.println("Exception in addNewUser: " + ex.getMessage());
             throw new Exception("Exception in addNewUser:" + ex.getMessage());
         } finally {
@@ -267,53 +261,37 @@ class Request {
         }
     }
 
-    public void addListing(String title, String city, String building, String num_of_rooms, String description, String price, String contact_info,  String image, String token) {
+    public void addBook(String name, String token) {
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
         ResultSet rs = null;
         PreparedStatement ps = null;
-        String username = "";
+        int id = -1;
+        String fname = "";
+        String sname = "";
         try {
-            String psquery1 = "SELECT username FROM bitlab.Accounts WHERE token = ?;";
+            String psquery1 = "SELECT id,fname,sname FROM library.users WHERE token = ?;";
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, token);
             rs = ps.executeQuery();
             if (rs.next()) {
-                username = rs.getString("username");
-                String psquery2 = "INSERT INTO bitlab.Listings" +
-                        "(username, title, city, building, num_of_rooms, description, price, contact_info , postdate , status, image) " +
-                        "VALUES(?,?,?,?,?,?,?,?,?,?,?);";
+                fname = rs.getString("fname");
+                sname = rs.getString("sname");
+                id = rs.getInt("id");
+                String psquery2 = "INSERT INTO library.books" +
+                        "(name, owner_name, owner_id, current_holder_name,  current_holder_id) " +
+                        "VALUES(?,?,?,?,?);";
                 ps = conn.prepareStatement(psquery2);
-                ps.setString(1, username);
-                ps.setString(2, title);
-                ps.setString(3, city);
-                ps.setString(4, building);
-                ps.setInt(5, Integer.parseInt(num_of_rooms));
-                ps.setString(6, description);
-                ps.setInt(7, Integer.parseInt(price));
-                ps.setString(8, contact_info);
-                ps.setString(9, getTime());
-                ps.setString(10, "under moderation");
-                ps.setString(11, image);
-                ps.executeUpdate();
-                ps = conn.prepareStatement(LogStatement);
-                ps.setString(1, getTime());
-                ps.setString(2, username);
-                ps.setString(3, "Add Listing");
-                ps.setString(4, "Success");
-                ps.setString(5, title);
+                ps.setString(1, name);
+                ps.setString(2, fname+" "+sname);
+                ps.setInt(3, id);
+                ps.setString(4, fname+" "+sname);
+                ps.setInt(5, id);
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
             try {
                 System.out.println("Exception in addListing() " + ex.getMessage());
-                ps = conn.prepareStatement(LogStatement);
-                ps.setString(1, getTime());
-                ps.setString(2, username);
-                ps.setString(3, "Add Listing");
-                ps.setString(4, "Failure");
-                ps.setString(5, title);
-                ps.executeUpdate();
             } catch (Exception ex2) {
                 System.out.println("Exception in addListing() 2" + ex.getMessage());
             } finally {
@@ -330,7 +308,7 @@ class Request {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String psquery1 = "SELECT password FROM bitlab.Accounts WHERE username = ?;";
+            String psquery1 = "SELECT password FROM library.users WHERE username = ?;";
             ps = conn.prepareStatement(psquery1);
             ps.setString(1, username);
             rs = ps.executeQuery();
@@ -345,21 +323,7 @@ class Request {
             if (!pass.equals(generateHash(password))) {
                 throw new Exception("Invalid password");
             }
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "Log In");
-            ps.setString(4, "Success");
-            ps.setString(5, username);
-            ps.executeUpdate();
         } catch (Exception ex) {
-            ps = conn.prepareStatement(LogStatement);
-            ps.setString(1, getTime());
-            ps.setString(2, username);
-            ps.setString(3, "Log In");
-            ps.setString(4, "Failure");
-            ps.setString(5, ex.getMessage());
-            ps.executeUpdate();
             System.out.println("Exception in checkNameAndPassword: " + ex.getMessage());
             throw new Exception("Exception in checkNameAndPassword:" + ex.getMessage());
         } finally {
@@ -463,43 +427,38 @@ class Request {
         return null;
     }
 
-//    public List<Book> getListingsForUser(String token) {
-//        LinkedList<Book> list = new LinkedList<>();
-//        Connector connector = new Connector();
-//        Connection conn = connector.getConnection();
-//        ResultSet rs = null;
-//        PreparedStatement ps = null;
-//        String username = "";
-//        try {
-//            String psquery1 = "SELECT username FROM Accounts WHERE token = ?;";
-//            conn = connector.getConnection();
-//            ps = conn.prepareStatement(psquery1);
-//            ps.setString(1, token);
-//            rs = ps.executeQuery();
-//            if (rs.next()) {
-//                username = rs.getString("username");
-//            }
-//            String psquery2 = "SELECT * FROM Listings WHERE username = ?;";
-//            ps = conn.prepareStatement(psquery2);
-//            ps.setString(1, username);
-//            rs = ps.executeQuery();
-//            while (rs.next()) {
-//                Book listing = new Book(rs.getInt("id"),
-//                        rs.getString("username"),
-//                        rs.getString("title"),
-//                        rs.getString("city"),
-//                        rs.getString("building"),
-//                        rs.getInt("num_of_rooms"),
-//                        rs.getString("description"),
-//                        rs.getInt("price"),
-//                        rs.getString("postdate"),
-//                        rs.getString("contact_info"),
-//                        rs.getString("status"),
-//                        rs.getString("comment"),
-//                        rs.getString("image")
-//                );
-//                list.addLast(listing);
-//            }
+    public List<Book> getListingsForUser(String token) {
+        LinkedList<Book> list = new LinkedList<>();
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        int id = -1;
+        try {
+            String psquery1 = "SELECT id FROM library.users WHERE token = ?;";
+            conn = connector.getConnection();
+            ps = conn.prepareStatement(psquery1);
+            ps.setString(1, token);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+            }
+            String psquery2 = "SELECT * FROM library.books WHERE owner_id = ?;";
+            ps = conn.prepareStatement(psquery2);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Book book = new Book(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("owner_name"),
+                        rs.getInt("owner_id"),
+                        rs.getString("current_holder_name"),
+                        rs.getInt("current_holder_id"),
+                        rs.getString("description")
+                );
+                list.addLast(book);
+            }
 //            ps = conn.prepareStatement(LogStatement);
 //            ps.setString(1, getTime());
 //            ps.setString(2, username);
@@ -507,16 +466,16 @@ class Request {
 //            ps.setString(4, "Success");
 //            ps.setString(5, username);
 //            ps.executeUpdate();
-//            return list;
-//        } catch (Exception ex) {
-//            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
-//        } finally {
-//            DbUtils.closeQuietly(rs);
-//            DbUtils.closeQuietly(ps);
-//            DbUtils.closeQuietly(conn);
-//        }
-//        return null;
-//    }
+            return list;
+        } catch (Exception ex) {
+            System.out.println("Exception in getListingsForUser: " + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return null;
+    }
 
     public void deleteListing(String id, String token) {
         Connector connector = new Connector();

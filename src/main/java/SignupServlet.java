@@ -29,16 +29,16 @@ public class SignupServlet {
     public Response signUp(AccountSignup account) {
         String username = account.getUsername();
         String password = account.getPassword();
-        String email = account.getEmail();
         String firstName = account.getName();
         String lastName = account.getSurname();
         String phone = account.getPhone();
+        String email = account.getEmail();
 
 
 
         //TODO: Validate the given sign up inforamtion
         try {
-            request.addNewUser(username, password, firstName, lastName, phone);
+            request.addNewUser(username, password, firstName, lastName, phone,email);
             String token = request.generateToken(username);
             return Response.ok(token).build();
         } catch (Exception e) {

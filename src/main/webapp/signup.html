@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign Up</title>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/lodash.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
-    <script src="/scripts/jquery.min.js"></script>
-    <script src="/scripts/lodash.min.js"></script>
+
 
     <script type="text/javascript">
+
+        $(document).ready(function($) {
+            $("#signUpButton").on('click', function() {
+                singUp();
+            });
+
+        });
+
         function isValidEmail() {
             var email = $("#signUpEmail").val();
             return /^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*$/.test( email );
@@ -119,12 +129,7 @@
         }
 
 
-        $(document).ready(function () {
-            $("#signUpButton").on('click', function() {
-                singUp();
-            });
 
-        });
 
     </script>
 
