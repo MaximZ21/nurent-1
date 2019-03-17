@@ -67,7 +67,7 @@
         function singUp() {
             console.log("signup");
 
-            if (areFieldsCorrect()) {
+            if (true) {
                 var username = $("#username").val();
                 var email = $("#signUpEmail").val();
                 var password = $("#signUpPassword").val();
@@ -210,19 +210,19 @@
 <div class="signup-page">
 
 
-    <div class="form" id="signUpButton">
+    <div class="form">
         <h1>Sign Up</h1>
     <fieldset class="signup-form">
 
         <!--<legend>Sign Up</legend>-->
 
-        <div class="error" id="incorrectSignup"></div>
-        <div class="error" id="incorrectEmail"></div>
-        <div class="error" id="incorrectUsername"></div>
-        <div class="error" id="incorrectPassword"></div>
-        <div class="error" id="incorrectFirstName"></div>
-        <div class="error" id="incorrectLastName"></div>
-        <div class="error" id="incorrectPhoneNumber"></div>
+        <!--<div class="error" id="incorrectSignup"></div>-->
+        <!--<div class="error" id="incorrectEmail"></div>-->
+        <!--<div class="error" id="incorrectUsername"></div>-->
+        <!--<div class="error" id="incorrectPassword"></div>-->
+        <!--<div class="error" id="incorrectFirstName"></div>-->
+        <!--<div class="error" id="incorrectLastName"></div>-->
+        <!--<div class="error" id="incorrectPhoneNumber"></div>-->
 
 
         <div><input type="text" id="username" name="username" placeholder="username" required/></div>
@@ -239,7 +239,7 @@
                     placeholder="phone number" type="text"></div>
 
 
-        <button type="submit" id="loginButton" value="Sign Up">Register</button>
+        <button type="submit" id="signUpButton" value="Sign Up">Register</button>
 
         <p class="message">Alreday have an account? <a href="login">Log in</a></p>
     </fieldset>

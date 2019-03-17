@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add a listings</title>
+    <title>Chosen Book</title>
     <script src="/scripts/jquery-3.3.1.min.js"></script>
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -68,10 +68,10 @@
                         $("#requests").empty();
                         for (var i in book.recs) {
                             if (book.recs[i].rtype == "take") {
-                                $("#requests").append("<li><p>" + book.recs[i].taker_name + "Wants to take this book" + "</p><button type=\"button\" class='a' id='at'>Approve</button></li>");
+                                $("#requests").append("<li><p>" + book.recs[i].taker_name + " wants to take this book" + "</p><button type=\"button\" class='at' id='at'>Approve</button></li>");
                             }
                             else if(book.recs[i].rtype == "return"){
-                                $("#requests").append("<li><p>" + book.recs[i].taker_name + "Wants to return this book" + "</p><button type=\"button\" id='ar' >Confirm return</button></li>");
+                                $("#requests").append("<li><p>" + book.recs[i].taker_name + " wants to return this book" + "</p><button type=\"button\" id='ar' >Confirm return</button></li>");
                             }
                         }
                     }
@@ -81,9 +81,7 @@
                     else if(book.option == "patr"){
                         document.getElementById('buttons').innerHTML = "<button type=\"button\" id='patr'>Pending Approval To Return</button>"
                     }
-                    console.log("2");
-                    console.log(book.recs);
-                    console.log(book.recs[0].owner_name);
+
                 }
             });
         }
@@ -129,52 +127,7 @@
             });
         }
 
-        function at(c) {
-            var index = $(".at").index(c);
-            console.log(c);
-            book.taker_id = book.recs[index].taker_id;
 
-            console.log("tryong to at");
-            var token = localStorage.getItem("token");
-            $.ajax({
-                contentType : 'application/json',
-                url : "at",
-                dataType: 'text',
-                method : 'POST',
-                data: JSON.stringify(book),
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                success : function(r) {
-
-                    console.log("1");
-                    getBook();
-                    console.log("2");
-                }
-            });
-        }
-
-        function ar(c) {
-            var index = $(".ar").index(c);
-            console.log("tryong to ar");
-            var token = localStorage.getItem("token");
-            $.ajax({
-                contentType : 'application/json',
-                url : "ar",
-                dataType: 'text',
-                method : 'POST',
-                data: JSON.stringify(book),
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
-                success : function(r) {
-
-                    console.log("1");
-                    getBook();
-                    console.log("2");
-                }
-            });
-        }
 
 
         $(document).ready(function () {
@@ -206,7 +159,7 @@
                 ar();
             });
             $(document).on('click', '.at', function (e) {
-
+                console.log("at pressed");
                 at(e.target);
             });
 
@@ -216,7 +169,7 @@
         });
 
         function cancelFunction() {
-            window.location.replace("/nurent/profile");
+            window.location.replace("/library/profile");
         }
 
 

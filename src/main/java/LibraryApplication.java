@@ -5,17 +5,16 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 
-@ApplicationPath("/nurent")
-public class NuRentApplication extends Application {
+@ApplicationPath("/library")
+public class LibraryApplication extends Application {
     private Set<Object> singletons = new HashSet<Object>();
     private Set<Class<?>> empty = new HashSet<Class<?>>();
     
-    public NuRentApplication() {
+    public LibraryApplication() {
         singletons.add(new LoginServlet());
         singletons.add(new SignupServlet());
         singletons.add(new ListingsServlet());
         singletons.add(new ProfileServlet());
-        singletons.add(new ModeratorServlet());
     }
     
     @Override

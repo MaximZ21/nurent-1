@@ -49,37 +49,6 @@
             }
         }
 
-        // function singUp() {
-        //     var email = $("#signUpEmail").val();
-        //     if (isValidEmail(email)) {
-        //         var credentials = {
-        //             email: email,
-        //             password: $("#signUpPassword").val()
-        //         }
-        //         $.ajax({
-        //             url : 'login/signup',
-        //             contentType : 'application/json',
-        //             dataType: 'json',
-        //             method : 'POST',
-        //             statusCode : {
-        //                 401: function (r) {
-        //                     var message = r.responseJSON.message;
-        //                     console.log(r);
-        //                     $('#signUpIncorrect').empty();
-        //                     $('#signUpIncorrect').append("<p>"+ message + "</p>");
-        //                 }
-        //             },
-        //             success : function (r) {
-        //
-        //                 window.location.replace("/");
-        //             },
-        //             data: JSON.stringify(credentials)
-        //         });
-        //     } else {
-        //         $('#signUpIncorrect').empty();
-        //         $('#signUpIncorrect').append("<p>Incorrect email!</p>");
-        //     }
-        // }
 
 
         $(document).ready(function () {

@@ -133,7 +133,7 @@ public class ListingsServlet {
     @Path("at")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({MediaType.APPLICATION_JSON})
-    public Response at(@Context HttpHeaders headers, BookPost book
+    public Response at(@Context HttpHeaders headers, BookPost book, @QueryParam("taker_id") String taker_id
     ) {
         System.out.println("from at");
         List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
