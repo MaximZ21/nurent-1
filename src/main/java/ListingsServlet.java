@@ -67,6 +67,13 @@ public class ListingsServlet {
     @Produces({MediaType.APPLICATION_JSON})
     public Response getBookInfo(@Context HttpHeaders headers, @QueryParam("id") int id) {
         System.out.println("from getBookInfo");
+
+        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+
+
+        String token = auth.get(0).substring("Bearer".length()).trim();
+
+
         System.out.println(id);
         Book book = request.getBookInfo(id);
         System.out.println(book.name);
@@ -78,9 +85,63 @@ public class ListingsServlet {
         bookPost.setCurrent_holder_id(Integer.toString(book.getCurrent_holder_id()));
         bookPost.setCurrent_holder_name(book.getCurrent_holder_name());
         bookPost.setDescription(book.getDescription());
+        bookPost.setUser_id(request.getUserId(token));
+        bookPost.setUser_name(request.getUserName(token));
+        bookPost.setOption(request.getOption(book.getId(),book.getOwner_id(),book.getCurrent_holder_id(),request.getUserId(token)));
+        for (int i = 0 ; i < book.recs.size() ; i++){
+            bookPost.recs.add(book.recs.get(i));
+        }
+        System.out.println("sizes");
+        System.out.println(book.recs.size());
+        System.out.println(bookPost.recs.size());
         Gson gson = new Gson();
         String json = gson.toJson(bookPost);
         return Response.ok(json).build();
+    }
+
+    @POST
+    @Path("requestBook")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response requestBook(@Context HttpHeaders headers, BookPost book
+    ) {
+        System.out.println("from requestBook");
+        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+        String token = auth.get(0).substring("Bearer".length()).trim();
+        System.out.println(book.getName());
+        System.out.println(book.getId());
+        request.requestBook(book.getUser_id(),Integer.parseInt(book.getId()),Integer.parseInt(book.getOwner_id()),book.getOwner_name(),book.getUser_name());
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("returnBook")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response returnBook(@Context HttpHeaders headers, BookPost book
+    ) {
+        System.out.println("from requestBook");
+        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+        String token = auth.get(0).substring("Bearer".length()).trim();
+        System.out.println(book.getName());
+        System.out.println(book.getId());
+        request.requestBook(book.getUser_id(),Integer.parseInt(book.getId()),Integer.parseInt(book.getOwner_id()),book.getOwner_name(),book.getUser_name());
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("at")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response at(@Context HttpHeaders headers, BookPost book
+    ) {
+        System.out.println("from at");
+        List<String> auth = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+        String token = auth.get(0).substring("Bearer".length()).trim();
+        System.out.println(book.getName());
+        System.out.println(book.taker_id);
+
+        return Response.ok().build();
     }
 
 }

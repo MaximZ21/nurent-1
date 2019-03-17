@@ -30,39 +30,147 @@
 
         function getBook() {
             console.log("tryong to get book");
-            // var e = document.getElementById("buttonid");
-            // var city = e.innerHTML;
-            // var minprice = document.getElementById("minprice").value;
-            // var maxprice = document.getElementById("maxprice").value;
-            // var min_number_of_rooms = document.getElementById("minrooms").value;
-            // var max_number_of_rooms = document.getElementById("maxrooms").value;
-
-            // console.log(city);
+            var token = localStorage.getItem("token");
             $.ajax({
                 url : "getBookInfo?" + $.param({"id": JSON.parse(localStorage.getItem("passBookId"))}),
                 dataType: 'json',
                 method : 'GET',
-                data: {
-                    // "name": name,
-                    // "owner_name" : owner_name,
-                    // "current_holer_name" : current_holer_name,
-                    // "description" : description
+                headers: {
+                    "Authorization": "Bearer " + token
                 },
                 success : function(r) {
                     book = r;
 
                     console.log("1");
+                    console.log(book.user_id);
+                    console.log(book.user_name);
+                    console.log(book.option);
                     var element = document.createElement("div");
                     // element.innerHTML="<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+book.name+"</p></b></h4><p>Owner: "+book.owner_name+"</p><p>Current holder: "+book.current_holder_name+"</p><p>Description: "+book.description+"</p><td></tr></table></div></div></div>";
                     document.getElementById('bookSpace').innerHTML = "<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+book.name+"</p></b></h4><p>Owner: "+book.owner_name+"</p><p>Current holder: "+book.current_holder_name+"</p><p>Description: "+book.description+"</p><td></tr></table></div></div></div>";
-                    if(book.owner_id == book.current_holder_id){
-                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='request'>Request book</button>"
+                    if(book.option == "request")//+
+                    {
+                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='request' onClick='requestBook()'>Request book</button>"
                     }
-                    else
+                    else if(book.option == "taken")//+
                     {
                         document.getElementById('buttons').innerHTML = "<button type=\"button\" id='taken'>Book is not available now</button>"
                     }
+                    else if(book.option == "nothing")//+
+                    {
+                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='nothing'>No requests for your book</button>"
+                    }
+                    else if(book.option == "return")//?
+                    {
+                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='Return'>Return book</button>"
+                    }
+                    else if(book.option == "displayRequests") {
+                        $("#requests").empty();
+                        for (var i in book.recs) {
+                            if (book.recs[i].rtype == "take") {
+                                $("#requests").append("<li><p>" + book.recs[i].taker_name + "Wants to take this book" + "</p><button type=\"button\" class='a' id='at'>Approve</button></li>");
+                            }
+                            else if(book.recs[i].rtype == "return"){
+                                $("#requests").append("<li><p>" + book.recs[i].taker_name + "Wants to return this book" + "</p><button type=\"button\" id='ar' >Confirm return</button></li>");
+                            }
+                        }
+                    }
+                    else if(book.option == "patt"){
+                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='patt'>Pending Approval To Take</button>"
+                    }
+                    else if(book.option == "patr"){
+                        document.getElementById('buttons').innerHTML = "<button type=\"button\" id='patr'>Pending Approval To Return</button>"
+                    }
+                    console.log("2");
+                    console.log(book.recs);
+                    console.log(book.recs[0].owner_name);
+                }
+            });
+        }
 
+        function returnBook() {
+            console.log("tryong to return book");
+            var token = localStorage.getItem("token");
+            $.ajax({
+                contentType : 'application/json',
+                url : "returnBook",
+                dataType: 'text',
+                method : 'POST',
+                data: JSON.stringify(book),
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success : function(r) {
+                    console.log("1");
+                    getBook();
+                    console.log("2");
+                }
+            });
+        }
+
+        function requestBook() {
+            console.log("tryong to request book");
+            var token = localStorage.getItem("token");
+            $.ajax({
+                contentType : 'application/json',
+                url : "requestBook",
+                dataType: 'text',
+                method : 'POST',
+                data: JSON.stringify(book),
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success : function(r) {
+
+                    console.log("1");
+                    getBook();
+                    console.log("2");
+                }
+            });
+        }
+
+        function at(c) {
+            var index = $(".at").index(c);
+            console.log(c);
+            book.taker_id = book.recs[index].taker_id;
+
+            console.log("tryong to at");
+            var token = localStorage.getItem("token");
+            $.ajax({
+                contentType : 'application/json',
+                url : "at",
+                dataType: 'text',
+                method : 'POST',
+                data: JSON.stringify(book),
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success : function(r) {
+
+                    console.log("1");
+                    getBook();
+                    console.log("2");
+                }
+            });
+        }
+
+        function ar(c) {
+            var index = $(".ar").index(c);
+            console.log("tryong to ar");
+            var token = localStorage.getItem("token");
+            $.ajax({
+                contentType : 'application/json',
+                url : "ar",
+                dataType: 'text',
+                method : 'POST',
+                data: JSON.stringify(book),
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success : function(r) {
+
+                    console.log("1");
+                    getBook();
                     console.log("2");
                 }
             });
@@ -78,22 +186,30 @@
                 window.location.replace("/");
             }
             // buildInput();
-            $("#submit-button").on('click', function () {
-                sendListing();
+            $("#request").on('click', function () {
+                requestBook();
             });
-            $("#upload-button").on('click', function () {
-                console.log("test");
-                var d = new Date();
-                n1 = d.getTime();
-                n = Number(n1);
-                var widget = cloudinary.createUploadWidget({ cloudName: "dy0fmbqvd", multiple: false , maxFiles: 1,
-                     uploadPreset: "bndcdpof", public_id: n , croppingAspectRatio: 1.0,
-                    cropping: true, croppingCoordinatesMode: "custom"});
-                console.log(d);
-                widget.multiple = false;
-                widget.open();
+            // $("#upload-button").on('click', function () {
+            //     console.log("test");
+            //     var d = new Date();
+            //     n1 = d.getTime();
+            //     n = Number(n1);
+            //     var widget = cloudinary.createUploadWidget({ cloudName: "dy0fmbqvd", multiple: false , maxFiles: 1,
+            //          uploadPreset: "bndcdpof", public_id: n , croppingAspectRatio: 1.0,
+            //         cropping: true, croppingCoordinatesMode: "custom"});
+            //     console.log(d);
+            //     widget.multiple = false;
+            //     widget.open();
+            // });
 
+            $("#ar").on('click', function () {
+                ar();
             });
+            $(document).on('click', '.at', function (e) {
+
+                at(e.target);
+            });
+
 
 
 
@@ -199,6 +315,7 @@
 
     </div>
     <div class="form" id="buttons">
+        <ul  id="requests"> </ul>
 
     </div>
 

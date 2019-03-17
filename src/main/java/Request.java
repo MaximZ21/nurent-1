@@ -17,21 +17,246 @@ class Request {
             "VALUES(?,?,?,?,?);";
 
 
-    public Book getBookInfo(int id){
-        Book book = null;
+
+
+    public String getOption(int book_id, int o, int c, int m){
+        String option = "";
+        if(o == c && c!=m){
+            Connector connector = new Connector();
+            Connection conn = connector.getConnection();
+            ResultSet rs = null;
+            PreparedStatement ps = null;
+            try {
+                String query1 = "SELECT * FROM library.requests WHERE book_id = ? AND taker_id = ? AND type = 'take';";
+                System.out.println(query1);
+                PreparedStatement ps1 = conn.prepareStatement(query1);
+                ps1.setInt(1,book_id);
+                ps1.setInt(2,m);
+                rs = ps1.executeQuery();
+                if (rs.next()) {
+                    return "patt";
+                }
+                else{
+                    return "request";
+                }
+            } catch (Exception ex) {
+                System.out.println("Exception in getUserId" + ex.getMessage());
+            } finally {
+                DbUtils.closeQuietly(rs);
+                DbUtils.closeQuietly(ps);
+                DbUtils.closeQuietly(conn);
+            }
+        }
+        if(o==c && o==m){
+            Connector connector = new Connector();
+            Connection conn = connector.getConnection();
+            ResultSet rs = null;
+            PreparedStatement ps = null;
+            try {
+                String query1 = "SELECT * FROM library.requests WHERE book_id = ? ;";
+                System.out.println(query1);
+                PreparedStatement ps1 = conn.prepareStatement(query1);
+                ps1.setInt(1,book_id);
+                rs = ps1.executeQuery();
+                if (rs.next()) {
+                    return "displayRequests";
+                }
+                else{
+                    return "nothing";
+                }
+            } catch (Exception ex) {
+                System.out.println("Exception in getUserId" + ex.getMessage());
+            } finally {
+                DbUtils.closeQuietly(rs);
+                DbUtils.closeQuietly(ps);
+                DbUtils.closeQuietly(conn);
+            }
+            return "";
+        }
+        if(o!=c && m == c){
+            Connector connector = new Connector();
+            Connection conn = connector.getConnection();
+            ResultSet rs = null;
+            PreparedStatement ps = null;
+            try {
+                String query1 = "SELECT * FROM library.requests WHERE book_id = ? AND taker_id = ? AND type = 'return';";
+                System.out.println(query1);
+                PreparedStatement ps1 = conn.prepareStatement(query1);
+                ps1.setInt(1,book_id);
+                ps1.setInt(2,m);
+                rs = ps1.executeQuery();
+                if (rs.next()) {
+                    return "patr";
+                }
+                else{
+                    return "return";
+                }
+            } catch (Exception ex) {
+                System.out.println("Exception in getUserId" + ex.getMessage());
+            } finally {
+                DbUtils.closeQuietly(rs);
+                DbUtils.closeQuietly(ps);
+                DbUtils.closeQuietly(conn);
+            }
+        }
+        if(o!=c && m!=c){
+            return "taken";
+        }
+
+        return option;
+    }
+
+    public boolean at(int taker_id, int book_id, int owner_id, String owner_name, String taker_name){
         Connector connector = new Connector();
         Connection conn = connector.getConnection();
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String query1 = "SELECT * FROM library.books WHERE id = ? ;";
+            String psquery1 = "INSERT INTO library.requests(type, book_id, owner_id, owner_name, taker_id, taker_name) " +
+                    "VALUES(?,?,?,?,?,?);";
+            PreparedStatement ps1 = conn.prepareStatement(psquery1);
+            ps1.setString(1,"return");
+            ps1.setInt(2,book_id);
+            ps1.setInt(3,owner_id);
+            ps1.setString(4,owner_name);
+            ps1.setInt(5,taker_id);
+            ps1.setString(6,taker_name);
+            ps1.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Exception in getUserId" + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return false;
+    }
+
+
+    public boolean returnBook(int taker_id, int book_id, int owner_id, String owner_name, String taker_name){
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            String psquery1 = "INSERT INTO library.requests(type, book_id, owner_id, owner_name, taker_id, taker_name) " +
+                    "VALUES(?,?,?,?,?,?);";
+            PreparedStatement ps1 = conn.prepareStatement(psquery1);
+            ps1.setString(1,"return");
+            ps1.setInt(2,book_id);
+            ps1.setInt(3,owner_id);
+            ps1.setString(4,owner_name);
+            ps1.setInt(5,taker_id);
+            ps1.setString(6,taker_name);
+            ps1.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Exception in getUserId" + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return false;
+    }
+
+    public boolean requestBook(int taker_id, int book_id, int owner_id, String owner_name, String taker_name){
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            String psquery1 = "INSERT INTO library.requests(type, book_id, owner_id, owner_name, taker_id, taker_name) " +
+                    "VALUES(?,?,?,?,?,?);";
+            PreparedStatement ps1 = conn.prepareStatement(psquery1);
+            ps1.setString(1,"take");
+            ps1.setInt(2,book_id);
+            ps1.setInt(3,owner_id);
+            ps1.setString(4,owner_name);
+            ps1.setInt(5,taker_id);
+            ps1.setString(6,taker_name);
+            ps1.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            System.out.println("Exception in getUserId" + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return false;
+    }
+
+
+    public int getUserId(String token){
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            String query1 = "SELECT id FROM library.users WHERE token = ? ;";
             System.out.println(query1);
             conn = connector.getConnection();
             PreparedStatement ps1 = conn.prepareStatement(query1);
+            ps1.setString(1,token);
+            rs = ps1.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (Exception ex) {
+            System.out.println("Exception in getUserId" + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return -1;
+    }
+
+    public String getUserName(String token){
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        String fname = "";
+        String sname = "";
+        try {
+            String query1 = "SELECT fname,sname FROM library.users WHERE token = ? ;";
+            System.out.println(query1);
+            conn = connector.getConnection();
+            PreparedStatement ps1 = conn.prepareStatement(query1);
+            ps1.setString(1,token);
+            rs = ps1.executeQuery();
+            if (rs.next()) {
+                fname = rs.getString("fname");
+                sname = rs.getString("sname");
+            }
+            return fname+" "+sname;
+        } catch (Exception ex) {
+            System.out.println("Exception in getUserId" + ex.getMessage());
+        } finally {
+            DbUtils.closeQuietly(rs);
+            DbUtils.closeQuietly(ps);
+            DbUtils.closeQuietly(conn);
+        }
+        return "";
+    }
+
+    public Book getBookInfo(int id){
+        Book book = null;
+        Rec rec = null;
+        Connector connector = new Connector();
+        Connection conn = connector.getConnection();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try {
+            String query2 = "SELECT * FROM library.books WHERE id = ? ;";
+            System.out.println(query2);
+            PreparedStatement ps1 = conn.prepareStatement(query2);
             ps1.setInt(1,id);
             rs = ps1.executeQuery();
             if (rs.next()) {
-                System.out.println("1");
                 book = new Book(
                         rs.getInt("id"),
                         rs.getString("name"),
@@ -43,6 +268,32 @@ class Request {
                 );
             }
             System.out.println(book.name);
+        } catch (Exception ex) {
+            System.out.println("Exception in getBookInfo: " + ex.getMessage());
+        } finally {
+//            DbUtils.closeQuietly(rs);
+//            DbUtils.closeQuietly(ps);
+//            DbUtils.closeQuietly(conn);
+        }
+        try {
+            String query1 = "SELECT * FROM library.requests WHERE book_id = ? ;";
+            System.out.println(query1);
+            PreparedStatement ps1 = conn.prepareStatement(query1);
+            ps1.setInt(1,id);
+            rs = ps1.executeQuery();
+            System.out.println("ID");
+            System.out.println(id);
+            if (rs.next()) {
+                rec = new Rec(
+                        rs.getString("type"),
+                        rs.getString("book_id"),
+                        Integer.toString(rs.getInt("owner_id")),
+                        rs.getString("owner_name"),
+                        Integer.toString((rs.getInt("taker_id"))),
+                        rs.getString("taker_name")
+                );
+                book.recs.add(rec);
+            }
             return book;
         } catch (Exception ex) {
             System.out.println("Exception in getBookInfo: " + ex.getMessage());
@@ -51,6 +302,7 @@ class Request {
             DbUtils.closeQuietly(ps);
             DbUtils.closeQuietly(conn);
         }
+
         return book;
     }
 

@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 
 public class Book {
     int id;
@@ -7,9 +8,11 @@ public class Book {
     String current_holder_name;
     int current_holder_id;
     String description;
+    public LinkedList<Rec> recs;
 
     public Book(int id, String name, String owner_name, int owner_id,
                 String current_holder_name, int current_holder_id, String description) {
+        recs = new LinkedList<>();
         this.id = id;
         this.name = name;
         this.owner_name = owner_name;

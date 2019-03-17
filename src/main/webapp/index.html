@@ -153,13 +153,13 @@
 
             for (var i in books) {
 
-                console.log(books[i].title);
-                if(books[i].image != null) {
-                    var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + books[i].image;
-                }
-                console.log(im);
-//                 $("#listings-list").append("<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Title:"+listings[i].title+"</p></b></h4><p>Price:"+listings[i].price+"</p><p>Number of rooms:"+listings[i].num_of_rooms+"</p><p>City:"+listings[i].city+"</p><td></tr></table></div></div></div>");
-                $("#listings-list").append("<a href=\"nurent/listings/chosenBook\"><div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+books[i].name+"</p></b></h4><p>Owner: "+books[i].owner_name+"</p><p>Current holder: "+books[i].current_holder_name+"</p><p>Description: "+books[i].description+"</p><td></tr></table></div></div></div></a>");
+                // console.log(books[i].title);
+                // if(books[i].image != null) {
+                //     var im = 'https://res.cloudinary.com/dy0fmbqvd/image/upload/' + books[i].image;
+                // }
+                // console.log(im);
+//
+                $("#listings-list").append("<a href=\"nurent/listings/chosenBook\" style=\"text-decoration : none; color : #000000;\" ><div class='column'><div class='card'><div class='container'><h5><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+books[i].name+"</p></b></h5><p>Owner: "+books[i].owner_name+"</p><p>Current holder: "+books[i].current_holder_name+"</p><p>Description: "+books[i].description+"</p><td></tr></table></div></div></div></a>");
 
                 
                 var x = document.getElementsByTagName("img").item(i);
@@ -176,6 +176,7 @@
         function bookChosen(c) {
 
             var index = $(".column").index(c);
+            book.taker_id = books.recs[index].taker_id;
             console.log(index);
             var id = books[index].id;
             var token = localStorage.getItem("token");
@@ -321,52 +322,52 @@
  <script>
         /* When the user clicks on the button,
         toggle between hiding and showing the dropdown content */
-        function myFunction() {
-            document.getElementById("myDropdown").classList.toggle("show");
-        }
-        function display(id){
-            document.getElementById("buttonid").innerHTML=id;
-            var e = document.getElementById("buttonid");
-            var strUser = e.innerHTML;
-            console.log(strUser);
-        }
-        function filterFunction() {
-            var input, filter, ul, li, a, i;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            div = document.getElementById("myDropdown");
-            a = div.getElementsByTagName("a");
-            for (i = 0; i < a.length; i++) {
-                if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    a[i].style.display = "";
-                } else {
-                    a[i].style.display = "none";
-                }
-            }
-        }
+        // function myFunction() {
+        //     document.getElementById("myDropdown").classList.toggle("show");
+        // }
+        // function display(id){
+        //     document.getElementById("buttonid").innerHTML=id;
+        //     var e = document.getElementById("buttonid");
+        //     var strUser = e.innerHTML;
+        //     console.log(strUser);
+        // }
+        // function filterFunction() {
+        //     var input, filter, ul, li, a, i;
+        //     input = document.getElementById("myInput");
+        //     filter = input.value.toUpperCase();
+        //     div = document.getElementById("myDropdown");
+        //     a = div.getElementsByTagName("a");
+        //     for (i = 0; i < a.length; i++) {
+        //         if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
+        //             a[i].style.display = "";
+        //         } else {
+        //             a[i].style.display = "none";
+        //         }
+        //     }
+        // }
 
         // Accordion
-        function myAccFunc() {
-            var x = document.getElementById("demoAcc");
-            if (x.className.indexOf("w3-show") == -1) {
-                x.className += " w3-show";
-            } else {
-                x.className = x.className.replace(" w3-show", "");
-            }
-        }
+        // function myAccFunc() {
+        //     var x = document.getElementById("demoAcc");
+        //     if (x.className.indexOf("w3-show") == -1) {
+        //         x.className += " w3-show";
+        //     } else {
+        //         x.className = x.className.replace(" w3-show", "");
+        //     }
+        // }
 
 
 
         // Script to open and close sidebar
-        function w3_open() {
-            document.getElementById("mySidebar").style.display = "block";
-            document.getElementById("myOverlay").style.display = "block";
-        }
-
-        function w3_close() {
-            document.getElementById("mySidebar").style.display = "none";
-            document.getElementById("myOverlay").style.display = "none";
-        }
+        // function w3_open() {
+        //     document.getElementById("mySidebar").style.display = "block";
+        //     document.getElementById("myOverlay").style.display = "block";
+        // }
+        //
+        // function w3_close() {
+        //     document.getElementById("mySidebar").style.display = "none";
+        //     document.getElementById("myOverlay").style.display = "none";
+        // }
     </script>
 
 

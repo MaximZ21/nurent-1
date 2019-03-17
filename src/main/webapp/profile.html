@@ -73,10 +73,7 @@
                 //     comment = books[i].comment;
                 // }
                 if(true) {
-                    $("#listings-list").append("<li class='approved-listing'>" + books[i].name + ", Owner " + books[i].owner_name
-                        + ", Current Holder: " + books[i].current_holder_name
-                        + ", Description: " + books[i].description + "  "
-                        + "<button class='delete-listing' type='button'>delete</button>" + "<button class='hide-listing' type='button'>hide</button>" + "<button class='show-listing' type='button' style='display:none;'>show</button>" + "</li>")
+                    $("#listings-list").append("<li class='approved-listing'>" + "<div class='column'><div class='card'><div class='container'><h4><b><table><tr><td><img src='https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg'></td>"+"<td><p>Name: "+books[i].name+"</p></b></h4><p>Owner: "+books[i].owner_name+"</p><p>Current holder: "+books[i].current_holder_name+"</p><p>Description: "+books[i].description+"</p><td></tr></table></div></div></div>" + "</li>")
                 }
                 //  else if (listings[i].status === "hidden") {
                 //     $("#listings-list").append("<li class='hidden-listing'>" + listings[i].title + ", Price: " + listings[i].price
@@ -207,7 +204,7 @@
         .card {
             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
             transition: 0.3s;
-            width: 100%;
+            width: 50%;
         }
         .card:hover {
             box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -229,6 +226,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
     </style>
 </head>
 <body>
