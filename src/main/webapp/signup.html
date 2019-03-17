@@ -149,14 +149,16 @@
             position: relative;
             z-index: 1;
             background: #FFFFFF;
-            max-width: 360px;
+            /*max-width: 360px;px*/
             margin: 0 auto 100px;
             padding: 25px;
             text-align: center;
             box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
         }
 
+
         .form input {
+            max-width: 360px;
             font-family: "Roboto", sans-serif;
             outline: 0;
             background: #f2f2f2;
@@ -179,11 +181,7 @@
         }
 
         body {
-            background:linear-gradient(to top left, #ebebeb 70%, #fff 70.1%);
-            <!--background: #76cdd8; /* fallback for old browsers */
-            font-family: "Roboto", sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background:linear-gradient(to bottom,  #76cdd8 50%, #fff 50%);
         }
 
         .form button {
@@ -237,7 +235,8 @@
 
         <div><input type="text" id="lastName" name="firstName" placeholder="last name"></div>
 
-        <div><input type="text" id="phone" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"  ></div>
+        <div><input  id="phone" maxlength="11" name="phone" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                    placeholder="phone number" type="text"></div>
 
 
         <button type="submit" id="loginButton" value="Sign Up">Register</button>
